@@ -1,0 +1,55 @@
+include
+ <script src="../General/jquery.min.js"></script>
+ <script src="../General/libo.js"></script>
+
+ <form id="form_upload1">
+<input type="file" class="form-control mb-5"  onblur="return ValidateOne(this);" onchange="upload_File('Employee/Employee_Images','1')" name="txt_photo" id="txt_photo">
+</form>
+[shd not be under any other form]
+[each file upload shd be in its own form]
+
+
+onchange="upload_File('Employee/Employee_Images','1')" : set 2nd parameter as 0 if the form is first in view source, and so on
+add: <input type='hidden' value="" id='hid_fileName' />
+
+
+Add in libo:
+//========================================================file Upload====================================================
+function upload_File(path, formNo) {
+               $.ajax({
+               url: '../General/File_Upload.ashx?path=' + path,
+               type: 'POST',
+               data: new FormData($('form')[formNo]),
+               cache: false,
+               contentType: false,
+               processData: false,
+               success: function (file) {
+                   SetVal("hid_fileName",file.name);
+               }
+           });
+       }
+========================================
+
+
+libo will call File_Upload.ashx which lies in general folder.
+
+NOTE: 
+0. :		db photo[file size] field size : varchar: 100
+0.1 :		&photo=' + escape(getVal("hid_fileName")) + '
+0.2: 		in update : string IsNewPhoto = ""; if (photo != "") { IsNewPhoto = " photo='" + photo + "', "; }
+0.3:		" + IsNewPhoto + "
+
+
+1. if there is no other form or is the first form then it shd be--> data: new FormData($('form')[0]), 
+	if it is 2nd form, then it shd be like---> data: new FormData($('form')[1]),
+
+2. this form shd not be within any other form.
+
+3. Now at the time of save or update you will find file name in escape(getVal("hid_fileName")), SetVal("hid_fileName",""); after use.
+
+3. we need to pass two parameters i.e. 1. path, 2nd: form number [which form it is like, first, or second or, so on]
+
+4. if there are more than 1 upload button, then each shd be in its own form.
+
+
+

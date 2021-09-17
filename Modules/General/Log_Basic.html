@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html><html lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><title></title>
+<style>
+a {color:midnightblue;}
+html{font-size: 15px;font-family: calibri;color: #3B3B3B;}
+td{padding:10px;border:1px dashed silver;}
+th{padding:10px;border:1px dashed silver;}
+table {border:1px solid silver;}
+
+/*====================Popup Part=====================*/
+.popup {display:none; border-radius: 10px;background: #6b6a63;margin: 25px auto 0;padding: 13px;position: absolute;width: 500px;top: 8%;left: 55%;margin-left: -300px;margin-top: -40px;text-align:center;}
+.holder{width:100%;}
+.contentKey{background:#ccc;padding: 28px 26px 33px 25px;color:#004e48;font-weight:normal;text-transform:capitalize;line-height: 25px;}
+.content{background:#ccc;padding: 0px 0px 25px 9px;color:red;cursor:pointer;padding-top:15px;}
+.sucs{color:green;padding-top:15px;}
+/*====================Popup Part End=====================*/
+</style>
+
+</head>
+<body>
+<table style="width:100%;float:left;">
+        <tr>
+            <td>
+                <table cellpadding="5" cellspacing="5" id="panel_view">
+                    <tr>
+                        <td>Select Date</td>
+                        <td><input type="text" id="txtdate" /></td>
+                        <td><input type="button" id="btnView" value="View Log" onclick="view();" /></td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="3" id="td_View"></td>
+
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+    <PopUp><div id="popup" class="popup"><div class="content" id='Div_PopUpTxt'></div><div class="content" style="text-align: center;" onclick="javascript:document.getElementById('popup').style.display='none';"> <span style="border: 2px solid silver;padding: 5px;"> OK </span></div></div></PopUp>
+
+<script>
+    var xhrView; function objView() { return (window.XMLHttpRequest) ? (new XMLHttpRequest()) : (new ActiveXObject("Microsoft.XMLHTTP")); }
+
+
+
+//-----------------------------------------------------------View
+    
+    var today = new Date();	//var d_numdays = new Date(n_year, n_month, 0);
+
+    document.getElementById("txtdate").value = today.getMonth() + "-" + today.getDate() + "-" + today.getFullYear();//+"-"+dt.getMonth+"-"+dt.getFullYear;
+
+    function view() {
+            xhrView = objView(); xhrView.onreadystatechange = RepView;
+            var operation_Date = document.getElementById("txtdate").value;
+            var p = 'fun=GetLog&operation_Date=' + operation_Date;
+            p = "../../Modules_Handler/General/Log_Basic.ashx?" + p; xhrView.open('GET', p, true); xhrView.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); xhrView.send('');
+
+        }
+
+        function RepView() {
+            if (xhrView.readyState == 4 || xhrView.readyState == "complete") {
+                var txt = xhrView.responseText;
+
+                if (txt.indexOf("Error: ") == -1) {
+                    document.getElementById("td_View").innerHTML = txt;
+               }
+                else {
+                    document.getElementById('popup').style.display = 'block';
+                    document.getElementById('Div_PopUpTxt').innerHTML = txt;
+                }
+            }
+        }
+//----------------------------------------------------------
+
+    
+
+
+
+
+//--------------------------------------------------------------Validate
+        function validate()
+        {
+            //if (document.getElementById("DDL_Branch").selectedIndex == 0) { alert("Please Select Branch"); }
+            //if (document.getElementById("txt_Division_Code").value.trim() == "") { alert("Please Enter Division Code"); }
+            //if (document.getElementById("txt_Division_Name").value.trim() == "") { alert("Please Enter Division Name"); }
+        }
+//-------------------------------------------------------------
+
+    </script>
+</body>
+</html>

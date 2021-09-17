@@ -1,0 +1,3 @@
+select a.Item_Type, a.Rate, a.Item_Description as Mapped_Item_Description, a.min_margin_percent as Gross_Profit_Margin, a.Vat_percent as Sales_Tax,a.Manufacturer,a.OEM_Reference, 
+                                b.Average_Cost as Unit_Cost from tbl_item a left outer join tbl_inventory_item b on
+                                a.item_id=b.item_id where a.Item_Id=
