@@ -68,15 +68,14 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
         string SearchFilter="";
         if(!SearchString.Equals(""))
         {
-            SearchFilter="and  ( isnull(b.Ledger_Account_Name,c.Division_Name) like '%"+SearchString+"%' or  a.Source_Type like '%"+SearchString+"%' )";
+            SearchFilter="and  ( a.Name like '%"+SearchString+"%' or  a.Business_Id like '%"+SearchString+"%' )";
         }
 
         string  sql = "with NewTable as (select a.*,ROW_NUMBER() over (order by Id desc) as RowNum from tbl_customer_supplier a " +
                "  where IsSupplier=0 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
 
         DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_customer_supplier a " +
-             " where 1=1 "+SearchFilter);
+        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_customer_supplier a  where 1=1 "+SearchFilter);
 
         if(dt.Rows.Count>0)
         {

@@ -106,9 +106,15 @@ function calltoast(msg, msgtype) {
 }
 
 
+function Searchtxt() {
+    SetVal("hid_page", 0);
+    ListAllCustomer();
+}
+
+
 function pageNo(pno) {
     SetVal("hid_page", pno);
-   
+    ListAllCustomer();
 }
 
 
