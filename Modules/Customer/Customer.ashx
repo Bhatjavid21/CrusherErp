@@ -47,6 +47,8 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
          int Ret=-9;
         string[] Data = InsertArray.Split('|');
 
+
+
     }
 
     public bool IsReusable { get { return false; } }
