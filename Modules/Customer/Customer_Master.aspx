@@ -70,8 +70,7 @@
                                             </div>
 
                             <div class="col-md-8 mt-25 ">
-                                <button class="btn btn-success right fa fa-plus" id="btnAdd" onclick="Add();" data-toggle="modal" data-target="#Popup" ></button>
-
+                                <button class="btn btn-success right fa fa-plus" id="btnAdd" onclick="ResetFields();" data-toggle="modal" data-target="#Popup" ></button>
 
                             </div>
                         </div>
