@@ -49,7 +49,7 @@
         <div class="content-wrapper">
             <!-- Main content -->
             <section class="content mt-20">
-               
+               <input type="hidden" id="hdn_PageNo" value="0" />
                 <div class="box">
                      <div class="col-lg-12 col-12 text-center" hidden  id="divViewAccess">
                         <div class="box">
@@ -82,11 +82,13 @@
                                         <tr>
 
                                             <th>Customer Name</th>
-                                            <th>Date</th>
-                                            <th>Customer Name</th>
+                                            <th>Business Id</th>
+                                            <th>Address</th>
 
+                                            <th>Phone No.</th>
+                                            <th>Balance</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="Customer_list_Body">
@@ -196,6 +198,7 @@
 
         $(document).ready(function () {
           //  GetUserAccess();
+            ListAllCustomer();
         });
 
 

@@ -29,6 +29,7 @@ function Save_Customer() {
 
                             $('#Popup').modal('toggle');
                             calltoast("Data Saved Sucessfully", "success");
+                            ListAllCustomer();
                         }
                         else {
                             calltoast("Something went wrong", "error");
@@ -65,7 +66,7 @@ function Save_Customer() {
     }
 }
 
-function ListAllBudget() {
+function ListAllCustomer() {
 
    // var SourceType = $('#DdlListDiv').val()
    // var Status = $('#DdlListStatus').val()
@@ -83,7 +84,7 @@ function ListAllBudget() {
 
                 if (data != "") {
 
-                    SetInnerVal("tblbdyListallBudgets", data.split("|")[0])
+                    SetInnerVal("Customer_list_Body", data.split("|")[0])
                     SetInnerVal("Div_Paging", data.split("|")[1])
                 }
             }
