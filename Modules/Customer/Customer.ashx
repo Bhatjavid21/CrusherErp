@@ -75,7 +75,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                "  where IsSupplier=0 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
 
         DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_customer_supplier a  where 1=1 "+SearchFilter);
+        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_customer_supplier a  where IsSupplier=0  "+SearchFilter);
 
         if(dt.Rows.Count>0)
         {
