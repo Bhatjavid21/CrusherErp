@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Sales_Master.aspx.cs" Inherits="Modules_MRM_mrm_list" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Product_Master.aspx.cs" Inherits="Modules_MRM_mrm_list" %>
 
 <%@ Register Src="~/Modules/General/header.ascx" TagName="uch" TagPrefix="uc1" %>
 <%@ Register Src="~/Modules/General/sidebar.ascx" TagName="ucs" TagPrefix="uc2" %>
@@ -18,7 +18,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="<%=G.B%>assets/images/favicon.ico">
-    <title>Sales List</title>
+    <title>Product List</title>
 
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap/dist/css/bootstrap.css">
@@ -81,17 +81,17 @@
                                     <thead>
                                         <tr>
 
-                                            <th>Sales Name</th>
+                                            <th>Product Name</th>
                                             <th>Quantity</th>
                                             <th>Rate</th>
 
                                             <th>Created Date</th>
-                                            <th>Sales Description</th>
+                                            <th>Product Description</th>
                                             <%--<th>Status</th>--%>
                                              <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="Sales_list_Body">
+                                    <tbody id="Product_list_Body">
                                     </tbody>
                                 </table>
 
@@ -121,7 +121,7 @@
         <div class="modal-dialog ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="PopUpTitle">Add Sales</h5>
+                    <h5 class="modal-title" id="PopUpTitle">Add Product</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -136,73 +136,33 @@
                         </div>
                           </div>
                     <div class="row mb-10">
-                        <div class="col-md-3">
-                            <label>Customer<span class="text-danger">*</span></label>
-                            <select id="ddlcustomer" class="form-control enq-dropdown select2">
-                                <option value="0"> Select</option>
-                            </select>
+                        <div class="col-md-5">
+                            <label>Product Name<span class="text-danger">*</span></label>
+                            <input class="form-control " id="txtProName"   />
                         </div>
-                        <div class="col-md-3">
-                             <label>Product<span class="text-danger">*</span></label>
-                            <select id="ddlproduct" class="form-control enq-dropdown select2" onchange="GetRate()">
-                                <option value="0"> Select</option>
-                            </select>
+                        <div class="col-md-4">
+                             <label>Quantity (ft)<span class="text-danger">*</span></label>
+                            <input class="form-control " id="txtqty"  />
                         </div>
-                        <div class="col-md-3">
-                            <label>Quantity (ft)<span class="text-danger">*</span></label>
-                            <input class="form-control " value="200" id="txtQty" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                        <div class="col-md-3 ">
+                            <label>Rate<span class="text-danger">*</span></label>
+                            <input class="form-control " id="txtRate" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                         </div>
-                       <div class="col-md-3">
-                            <label>Rate Per ft<span class="text-danger">*</span></label>
-                            <input class="form-control " value="0.00" id="txtRate" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                        </div>
+                       
                     </div> 
-                    <div class="row mb-10">
-                        <div class="col-md-3">
-                            <label>No.Of Trips<span class="text-danger">*</span></label>
-                            <input class="form-control " value="1" id="txtTrips" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                        </div>
-                        <div class="col-md-3">
-                            <label>Site<span class="text-danger">*</span></label>
-                            <input class="form-control " id="txtSite"  />
-                          
-                        </div>
-                         
-                    <div class="col-md-3">
-                            <label>Sales Price<span class="text-danger">*</span></label>
-                            <input class="form-control " readonly value="0.00" id="txtSalesPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                        </div>
-                    <div class="col-md-3">
-                            <label>Fuel Price</label>
-                            <input class="form-control " value="0.00" id="txtFuelPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                       </div>
-                        </div>
                   <div class="row mb-10">
-                      <div class="col-md-3">
-                            <label>Discount Amount</label>
-                            <input class="form-control " value="0.00" id="txtDiscount" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                       </div>
-                           <div class="col-md-3">
-                            <label>Total Cost<span class="text-danger">*</span></label>
-                            <input class="form-control " value="0.00" readonly id="txtTotalCost" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                       </div>
+                           
                         <div class="col-md-6 ">
-                            <label>Remarks </label>
-                            <textarea  class="form-control " id="txtRemarks"></textarea>
+                            <label>Product Description<span class="text-danger">*</span></label>
+                            <textarea  class="form-control " id="txtDescrp"></textarea>
                           
                         </div>
                      
                    </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-success right" id="btnSave" onclick="Save_Sales()">Save</button>
+                            <button class="btn btn-success right" id="btnSave" onclick="Save_Product()">Save</button>
                             </div>
                         </div>
                     
@@ -227,15 +187,14 @@
     <script src="<%=G.B%>assets/js/demo.js"></script>
 
     <script src="../General/libo.js" type="text/javascript"></script>
-    <script src="Sales.js"></script>
+    <script src="Product.js"></script>
 
     <script>
 
 
         $(document).ready(function () {
           //  GetUserAccess();
-            bindddls(false, 0, 0);
-            ListAllSales();
+            ListAllProduct();
         });
 
 

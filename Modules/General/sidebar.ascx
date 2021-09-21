@@ -46,7 +46,19 @@
                 </a>
             </li>
 
-            <li class="treeview <%Response.Write(G.set_Topmenu("items"));%>">
+             <li class="<%Response.Write(G.set_Submenu("report"));%>">
+                <a href="<%=G.S%>Reports/report-list.aspx">
+                    <i class="mdi mdi-mailbox"></i><span>Reports</span>
+                </a>
+            </li>
+
+             <li class="<%Response.Write(G.set_Submenu("Product"));%>">
+                <a href="<%=G.S%>Product/Product_Master.aspx">
+                    <i class="mdi mdi-apps"></i><span>Products</span>
+                </a>
+            </li>
+
+            <%--<li class="treeview <%Response.Write(G.set_Topmenu("items"));%>">
                 <a href="#">
                     <i class="mdi mdi-apps"></i><span>Item</span>
                     <span class="pull-right-container">
@@ -58,7 +70,7 @@
                     <li class="<%Response.Write(G.set_Submenu("item"));%>"><a href="<%=G.S%>Item/items.aspx"><i class="mdi mdi-toggle-switch-off"></i>Item List</a></li>
 
                 </ul>
-            </li>
+            </li>--%>
         
 
             <li class="treeview <%Response.Write(G.set_Topmenu("settings"));%>">
