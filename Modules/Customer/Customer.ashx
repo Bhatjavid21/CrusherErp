@@ -80,7 +80,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
         if(dt.Rows.Count>0)
         {
             foreach(DataRow dr in dt.Rows)
-            { 
+            {
 
                 output += "<tr>" +
                        "<td>" + dr["Name"] + "</td>" +
@@ -104,7 +104,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                                                 "<span><i class='ti-settings'></i></span>" +
                                             "</button>" +
                                             "<ul class='dropdown-menu dropdown-menu-right'>";
-                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='View(this.id)'><i class='fa fa-edit'></i>View</a></li>" +
+                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='View(this.id)'><i class='fa fa-eye'></i>View</a></li>" +
                    "<li class='dropdown-divider'></li>";
 
 
@@ -115,11 +115,14 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                 }
                 if(ApproveAccess.Equals("True"))
                 {
-                    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AprovePopup' onclick='GetEstimatedAmnt(this.id)'><i class='fa fa-edit'></i>Approve</a></li>" +
-                      "<li class='dropdown-divider'></li>";
+                    //output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AprovePopup' onclick='GetEstimatedAmnt(this.id)'><i class='fa fa-approve'></i>Approve</a></li>" +
+                    //  "<li class='dropdown-divider'></li>";
                 }
 
-
+                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AddSitePopup' onclick='AddSite(this.id)'><i class='fa fa-home'></i>Add Site</a></li>" +
+                   "<li class='dropdown-divider'></li>";
+                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AddPaymentPopup' onclick='AddPayment(this.id)'><i class='fa fa-money'></i>Add Payment</a></li>" +
+               "<li class='dropdown-divider'></li>";
                 output+="</div> </td></tr>";
             }
         }

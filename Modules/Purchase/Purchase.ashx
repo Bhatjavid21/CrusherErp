@@ -202,7 +202,6 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
-             DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[9] + " where Id=" + Data[0]);
             Context.Response.Write("Success");
         }
         else
@@ -216,15 +215,13 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
     void Update_Sales(string InsertArray,string Sales_Id)
     {
         int Ret=-9;
-        decimal OldTotalcost = decimal.Parse(DB.Get_Scaler("Select Total_Cost from tbl_Sales where Id=" + Sales_Id));
+
         string[] Data = InsertArray.Split('|');
-        decimal NewTotalCost = decimal.Parse(Data[9]);
-        decimal Difrence =NewTotalCost- OldTotalcost  ;
+
         string sql = "Update  tbl_Sales Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Sales_Price='"+Data[6]+"',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='"+Data[9]+"',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] +"' where Id="+Sales_Id;
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
-            DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Difrence + " where Id=" + Data[0]);
             Context.Response.Write("Success");
         }
         else

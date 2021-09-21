@@ -1,11 +1,7 @@
 
 
 function ResetFields() {
-    SetInnerVal("PopUpTitle", "Add Sales")
-    $('#SalesNo').html("");
-    $('#ddlcustomer').attr("disabled", false)
     $('#ddlcustomer').val(0);
-    $('#ddlproduct').attr("disabled", false)
     $('#ddlproduct').val(0);
     $('#txtQty').val("200");
     $('#txtRate').val("0.00") +
@@ -147,7 +143,6 @@ function Save_Sales() {
                            
                             $('#Popup').modal('toggle');
                             calltoast("Updated Saved Sucessfully", "success");
-                            ListAllSales();
                         }
                     }
                 }
@@ -194,19 +189,8 @@ function Edit(Sales_Id, Isview) {
                         $('#SalesNo').html("<b>Sales Order Number: </b>"+obj.Sale_Order_No)
                         SetInnerVal("PopUpTitle","Update Sales")
                         
-                      
-                        if (Isview == 1) {
-                            $("#AllContent :input").prop("disabled", true);
-                            SetInnerVal("PopUpTitle", "View Sales")
-                        }
-                        else {
-                            
-                            $("#AllContent :input").prop("disabled", false);
-                            $('#ddlcustomer').attr("disabled", true)
-
-                            $('#ddlproduct').attr("disabled", true)
-                        }
-                        
+                        //AllContent
+                        btnSave
                         $(".select2").select2();
                     });
                 }
