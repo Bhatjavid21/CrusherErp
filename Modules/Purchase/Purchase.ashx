@@ -1,4 +1,4 @@
-﻿<%@ WebHandler Language="C#" Class="H_tbl_Sales" %>
+﻿<%@ WebHandler Language="C#" Class="H_tbl_Purchase" %>
 using System;
 using System.Data.SqlClient;
 using System.Web;
@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using System.Configuration;
 using ClosedXML.Excel;
 
-public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
+public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
 {
     HttpContext Context; Int16 DF = 0;
     public void ProcessRequest(HttpContext context)
@@ -27,14 +27,14 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                 switch (Context.Request["fun"].ToString())
                 {
 
-                    case "Save_Sales":
+                    case "Save_Purchase":
 
-                        Save_Sales(context.Request.Form["InsertArray"]);
+                        Save_Purchase(context.Request.Form["InsertArray"]);
 
                         break;
-                    case "ListAllSales":
+                    case "ListAllPurchase":
 
-                        ListAllSales(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]));
+                        ListAllPurchase(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]));
 
                         break;
                     case "bindddls":
@@ -44,10 +44,10 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                         GetRate(context.Request.Form["Product_Id"]);
                         break;
                     case "Edit":
-                        Edit(context.Request.Form["Sales_Id"]);
+                        Edit(context.Request.Form["Purchase_Id"]);
                         break;
-                    case "Update_Sales":
-                        Update_Sales(context.Request.Form["InsertArray"], context.Request.Form["Sales_Id"]);
+                    case "Update_Purchase":
+                        Update_Purchase(context.Request.Form["InsertArray"], context.Request.Form["Purchase_Id"]);
                         break;
                 }
                 //  }
@@ -57,10 +57,10 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         }
         Context.Response.Cache.SetCacheability(HttpCacheability.NoCache);
     }
-    void Edit(string Sales_Id)
+    void Edit(string Purchase_Id)
     {
         string jasonString1 = "";
-        DataTable Dt = DB.GetDataTable("select * from tbl_Sales where Id="+Sales_Id);
+        DataTable Dt = DB.GetDataTable("select * from tbl_Purchase where Id="+Purchase_Id);
         if (Dt.Rows.Count > 0)
         {
             jasonString1 = JsonConvert.SerializeObject(Dt);
@@ -90,7 +90,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         {
             jasnString2 = "";
         }
-        Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Sales)  select Max(id) as Max_Id from tbl_Sales else select 0 as Max_Id")+1;
+        Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Purchase)  select Max(id) as Max_Id from tbl_Purchase else select 0 as Max_Id")+1;
         Context.Response.Write(jasonString1 + "|" + jasnString2+"|"+Max_Number.ToString());
     }
     void GetRate(string Product_id)
@@ -99,7 +99,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         Context.Response.Write(Rate);
     }
     //*********************************View*********************************View******************************************View***********************************************************
-    void ListAllSales(string SearchString,int Page_No)
+    void ListAllPurchase(string SearchString,int Page_No)
     {
         string EditAccess = "True";
         string ApproveAccess = "True";
@@ -124,11 +124,11 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
             SearchFilter="and  ( a.Sale_Order_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
         }
 
-        string  sql = "With NewTable as( select a.*,b.Id as CusId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id "+
+        string  sql = "With NewTable as( select a.*,b.Id as CusId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id "+
                       " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
 
         DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter);
+        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter);
 
         if(dt.Rows.Count>0)
         {
@@ -142,7 +142,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                        "<td>" + dr["Sale_Order_No"] + "</td>" +
                         "<td> " + dr["Quantity"] + " </td>" +
                         "<td> " + dr["Rate"] + " </td>" +
-                        "<td> " + dr["Sales_Price"] + " </td>" +
+                        "<td> " + dr["Purchase_Price"] + " </td>" +
                         "<td> " + dr["Discount_Amount"] + " </td>" +
                         "<td> " + dr["Fuel_Price"] + " </td>" +
                         "<td> " + dr["Total_Cost"] + " </td>";
@@ -192,13 +192,13 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         }
         Context.Response.Write(output+"|"+str_Pagging);
     }
-    void Save_Sales(string InsertArray)
+    void Save_Purchase(string InsertArray)
     {
         int Ret=-9;
 
         string[] Data = InsertArray.Split('|');
         string Sale_Order_No = GetSONumber(Data[0], Data[12]);
-        string sql = "Insert into tbl_Sales values('" + Data[0] + "','" + Sale_Order_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
+        string sql = "Insert into tbl_Purchase values('" + Data[0] + "','" + Sale_Order_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
@@ -212,13 +212,13 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
     }
 
 
-    void Update_Sales(string InsertArray,string Sales_Id)
+    void Update_Purchase(string InsertArray,string Purchase_Id)
     {
         int Ret=-9;
 
         string[] Data = InsertArray.Split('|');
 
-        string sql = "Update  tbl_Sales Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Sales_Price='"+Data[6]+"',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='"+Data[9]+"',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] +"' where Id="+Sales_Id;
+        string sql = "Update  tbl_Purchase Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Purchase_Price='"+Data[6]+"',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='"+Data[9]+"',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] +"' where Id="+Purchase_Id;
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {

@@ -1,12 +1,12 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Sales_Master.aspx.cs" Inherits="Modules_MRM_mrm_list" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Purchase_Master.aspx.cs" Inherits="Modules_MRM_mrm_list" %>
 
 <%@ Register Src="~/Modules/General/header.ascx" TagName="uch" TagPrefix="uc1" %>
 <%@ Register Src="~/Modules/General/sidebar.ascx" TagName="ucs" TagPrefix="uc2" %>
 <%@ Register Src="~/Modules/General/footer.ascx" TagName="ucf" TagPrefix="uc3" %>
 
 <% 
-    Session["top_menu"] = "Sales";
-    Session["sub_menu"] = "Sales-list";
+    Session["top_menu"] = "Purchase";
+    Session["sub_menu"] = "Purchase-list";
 %>
 
 <!DOCTYPE html>
@@ -18,7 +18,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="<%=G.B%>assets/images/favicon.ico">
-    <title>Sales List</title>
+    <title>Purchase List</title>
 
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap/dist/css/bootstrap.css">
@@ -44,13 +44,13 @@
 
         <uc1:uch ID="uch1" runat="server" />
         <uc2:ucs ID="ucs1" runat="server" />
-        <input type="hidden" value="0" id="SalesMaxNum" />
+        <input type="hidden" value="0" id="PurchaseMaxNum" />
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Main content -->
             <section class="content mt-20"> 
                <input type="hidden" id="hdn_PageNo" value="0" />
-                 <input type="hidden" id="hdn_Sales_Id" value="0" />
+                 <input type="hidden" id="hdn_Purchase_Id" value="0" />
                 <div class="box">
                      <div class="col-lg-12 col-12 text-center" hidden  id="divViewAccess">
                         <div class="box">
@@ -87,14 +87,14 @@
                                              <th>Sale Order No </th>
                                             <th>Qty</th>
                                             <th>Rate/ft</th>
-                                            <th>Sales Price</th>
+                                            <th>Purchase Price</th>
                                              <th>Discount</th>
                                             <th>Fuel Amount</th>
                                             <th>Total Cost</th>                        
                                              <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="Sales_list_Body">
+                                    <tbody id="Purchase_list_Body">
                                     </tbody>
                                 </table>
 
@@ -124,7 +124,7 @@
         <div class="modal-dialog ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="PopUpTitle">Add Sales</h5>
+                    <h5 class="modal-title" id="PopUpTitle">Add Purchase</h5>
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -132,7 +132,7 @@
                 <div class="modal-body pt-5" id="AllContent">
                       <div class="row mb-10">
                         <div class='col-md-6'>
-                             <label id="SalesNo"></label>
+                             <label id="PurchaseNo"></label>
                             
                         </div>
                           </div>
@@ -151,19 +151,19 @@
                         </div>
                         <div class="col-md-3">
                             <label>Quantity (ft)<span class="text-danger">*</span></label>
-                            <input class="form-control " value="200" id="txtQty" onkeyup="CalculateSalesPrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            <input class="form-control " value="200" id="txtQty" onkeyup="CalculatePurchasePrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                         </div>
                        <div class="col-md-3">
                             <label>Rate Per ft<span class="text-danger">*</span></label>
-                            <input class="form-control " value="0.00" id="txtRate" onkeyup="CalculateSalesPrice()"  onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            <input class="form-control " value="0.00" id="txtRate" onkeyup="CalculatePurchasePrice()"  onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                         </div>
                     </div> 
                     <div class="row mb-10">
                         <div class="col-md-3">
                             <label>No.Of Trips<span class="text-danger">*</span></label>
-                            <input type="number" onchange="CalculateSalesPrice()" class="form-control " onkeyup="CalculateSalesPrice()" value="1" id="txtTrips" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            <input type="number" onchange="CalculatePurchasePrice()" class="form-control " onkeyup="CalculatePurchasePrice()" value="1" id="txtTrips" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                         </div>
                         <div class="col-md-6">
@@ -173,8 +173,8 @@
                         </div>
                          
                     <div class="col-md-3">
-                            <label>Sales Price<span class="text-danger">*</span></label>
-                            <input class="form-control " readonly value="0.00" id="txtSalesPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            <label>Purchase Price<span class="text-danger">*</span></label>
+                            <input class="form-control " readonly value="0.00" id="txtPurchasePrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                         </div>
                     
@@ -182,13 +182,13 @@
                   <div class="row mb-10">
                       <div class="col-md-3">
                             <label>Fuel Price</label>
-                            <input class="form-control " onkeyup="CalculateSalesPrice()" value="0.00" id="txtFuelPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            <input class="form-control " onkeyup="CalculatePurchasePrice()" value="0.00" id="txtFuelPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                        </div>
 
                       <div class="col-md-3">
                             <label>Discount Amount</label>
-                            <input class="form-control " onkeyup="CalculateSalesPrice()" value="0.00" id="txtDiscount" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            <input class="form-control " onkeyup="CalculatePurchasePrice()" value="0.00" id="txtDiscount" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                        </div>
                            <div class="col-md-3">
@@ -210,7 +210,7 @@
                    </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-success right" id="btnSave" onclick="Save_Sales()">Save</button>
+                            <button class="btn btn-success right" id="btnSave" onclick="Save_Purchase()">Save</button>
                             </div>
                         </div>
                     
@@ -235,7 +235,7 @@
     <script src="<%=G.B%>assets/js/demo.js"></script>
 
     <script src="../General/libo.js" type="text/javascript"></script>
-    <script src="Sales.js"></script>
+    <script src="Purchase.js"></script>
 
     <script>
 
@@ -243,7 +243,7 @@
         $(document).ready(function () {
           //  GetUserAccess();
             bindddls(false, 0, 0);
-            ListAllSales();
+            ListAllPurchase();
         });
 
 

@@ -181,7 +181,7 @@
                         </div>
                   <div class="row mb-10">
                       <div class="col-md-3">
-                            <label>Fuel Price</label>
+                            <label>Fuel Amount</label>
                             <input class="form-control " onkeyup="CalculateSalesPrice()" value="0.00" id="txtFuelPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                        </div>
