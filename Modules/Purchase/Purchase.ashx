@@ -70,9 +70,10 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
     }
     void bindddls()
     {
-        string jasonString1 = ""; string jasnString2 = "";
+        string jasonString1 = "";
+        string jasnString2 = "";
         int Max_Number = 0;
-        DataTable Dt = DB.GetDataTable("select Id,Name from tbl_Customer_Supplier where IsSupplier=0");
+        DataTable Dt = DB.GetDataTable("select Id,Name from tbl_Customer_Supplier where IsSupplier=1");
         if (Dt.Rows.Count > 0)
         {
             jasonString1 = JsonConvert.SerializeObject(Dt);
@@ -121,14 +122,14 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         string SearchFilter="";
         if(!SearchString.Equals(""))
         {
-            SearchFilter="and  ( a.Sale_Order_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
+            SearchFilter="and  ( a.Purchase_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
         }
 
-        string  sql = "With NewTable as( select a.*,b.Id as CusId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id "+
+        string  sql = "With NewTable as( select a.*,b.Id as PurchId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Supplier_Id=b.Id "+
                       " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
 
         DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter);
+        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Supplier_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter);
 
         if(dt.Rows.Count>0)
         {
@@ -136,14 +137,12 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
             {
 
                 output += "<tr>" +
-                       "<td>" + Convert.ToDateTime(dr["Sale_Date"]).ToString("dd-MM-yyyy") + "</td>" +
+                       "<td>" + Convert.ToDateTime(dr["Purchase_Date"]).ToString("dd-MM-yyyy") + "</td>" +
                        "<td>" + dr["Name"] + "</td>" +
                        "<td>" + dr["Product_Name"] + "</td>" +
-                       "<td>" + dr["Sale_Order_No"] + "</td>" +
-                        "<td> " + dr["Quantity"] + " </td>" +
+                       "<td>" + dr["Purchase_No"] + "</td>" +
+                        "<td> " +dr["Quantity"] + " </td>" +
                         "<td> " + dr["Rate"] + " </td>" +
-                        "<td> " + dr["Purchase_Price"] + " </td>" +
-                        "<td> " + dr["Discount_Amount"] + " </td>" +
                         "<td> " + dr["Fuel_Price"] + " </td>" +
                         "<td> " + dr["Total_Cost"] + " </td>";
 
@@ -197,11 +196,12 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         int Ret=-9;
 
         string[] Data = InsertArray.Split('|');
-        string Sale_Order_No = GetSONumber(Data[0], Data[12]);
-        string sql = "Insert into tbl_Purchase values('" + Data[0] + "','" + Sale_Order_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
+        string Purchase_Order_No = GetPONumber(Data[0], Data[9]);
+        string sql = "Insert into tbl_Purchase values('" + Data[0] + "','" + Purchase_Order_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "')";
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
+            DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[6] + " where Id=" + Data[0]);
             Context.Response.Write("Success");
         }
         else
@@ -215,13 +215,15 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
     void Update_Purchase(string InsertArray,string Purchase_Id)
     {
         int Ret=-9;
-
+        decimal OldTotalcost = decimal.Parse(DB.Get_Scaler("Select Total_Cost from tbl_Purchase where Id=" + Purchase_Id));
         string[] Data = InsertArray.Split('|');
-
-        string sql = "Update  tbl_Purchase Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Purchase_Price='"+Data[6]+"',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='"+Data[9]+"',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] +"' where Id="+Purchase_Id;
+        decimal NewTotalCost = decimal.Parse(Data[6]);
+        decimal Difrence =NewTotalCost- OldTotalcost  ;
+        string sql = "Update  tbl_Purchase Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Fuel_Price='" + Data[5] + "',Total_Cost='"+Data[6]+"',Vehicle_No='" + Data[7] + "',Remarks='" + Data[8] +"' where Id="+Purchase_Id;
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
+            DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Difrence + " where Id=" + Data[0]);
             Context.Response.Write("Success");
         }
         else
@@ -230,11 +232,11 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         }
 
     }
-    string GetSONumber(string customer_id,string Max_Num)
+    string GetPONumber(string Supplier_id,string Max_Num)
     {
         string SONUM = "";
-        string CustomerBusName = DB.Get_Scaler("select Business_Id from tbl_Customer_Supplier where Id=" + customer_id);
-        SONUM = CustomerBusName + "-" + DateTime.Now.Year.ToString() + "-" + Max_Num;
+        string SuplierBusName = DB.Get_Scaler("select Business_Id from tbl_Customer_Supplier where Id=" + Supplier_id);
+        SONUM = SuplierBusName + "-" + DateTime.Now.Year.ToString() + "-" + Max_Num;
         return SONUM;
     }
 

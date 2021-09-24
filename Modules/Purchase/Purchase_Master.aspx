@@ -81,17 +81,17 @@
                                 <table class="table table-hover table-bordered ">
                                     <thead>
                                         <tr>
-                                            <th>Sale Date </th>
-                                            <th>Customer </th>
+
+                                            <th>Purchase Date </th>
+                                            <th>Supplier </th>
                                             <th>Product </th>
-                                             <th>Sale Order No </th>
+                                            <th>Purchase Order No </th>
                                             <th>Qty</th>
                                             <th>Rate/ft</th>
-                                            <th>Purchase Price</th>
-                                             <th>Discount</th>
                                             <th>Fuel Amount</th>
                                             <th>Total Cost</th>                        
-                                             <th>Action</th>
+                                            <th>Action</th>
+
                                         </tr>
                                     </thead>
                                     <tbody id="Purchase_list_Body">
@@ -133,13 +133,14 @@
                       <div class="row mb-10">
                         <div class='col-md-6'>
                              <label id="PurchaseNo"></label>
-                            
+
+                         
                         </div>
                           </div>
                     <div class="row mb-10">
                         <div class="col-md-3">
-                            <label>Customer<span class="text-danger">*</span></label>
-                            <select id="ddlcustomer" class="form-control enq-dropdown select2">
+                            <label>Supplier<span class="text-danger">*</span></label>
+                            <select id="ddlSupplier" class="form-control enq-dropdown select2">
                                 <option value="0"> Select</option>
                             </select>
                         </div>
@@ -155,7 +156,7 @@
                           
                         </div>
                        <div class="col-md-3">
-                            <label>Rate Per ft<span class="text-danger">*</span></label>
+                            <label>Rate Per (ft) <span class="text-danger">*</span></label>
                             <input class="form-control " value="0.00" id="txtRate" onkeyup="CalculatePurchasePrice()"  onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                         </div>
@@ -166,32 +167,18 @@
                             <input type="number" onchange="CalculatePurchasePrice()" class="form-control " onkeyup="CalculatePurchasePrice()" value="1" id="txtTrips" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                         </div>
-                        <div class="col-md-6">
+                        <%--<div class="col-md-6">
                             <label>Site<span class="text-danger">*</span></label>
                             <input class="form-control " id="txtSite"  />
                           
-                        </div>
-                         
-                    <div class="col-md-3">
-                            <label>Purchase Price<span class="text-danger">*</span></label>
-                            <input class="form-control " readonly value="0.00" id="txtPurchasePrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                        </div>
-                    
-                        </div>
-                  <div class="row mb-10">
-                      <div class="col-md-3">
+                        </div>--%>
+
+                          <div class="col-md-3">
                             <label>Fuel Price</label>
                             <input class="form-control " onkeyup="CalculatePurchasePrice()" value="0.00" id="txtFuelPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
                        </div>
-
                       <div class="col-md-3">
-                            <label>Discount Amount</label>
-                            <input class="form-control " onkeyup="CalculatePurchasePrice()" value="0.00" id="txtDiscount" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-                          
-                       </div>
-                           <div class="col-md-3">
                             <label>Total Cost<span class="text-danger">*</span></label>
                             <input class="form-control " value="0.00" readonly id="txtTotalCost" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                           
@@ -201,6 +188,13 @@
                             <input class="form-control " value="" id="txtvehicle"  />
                           
                        </div>
+                    
+                        </div>
+                  <div class="row mb-10">
+                     
+
+                    
+                          
                         <div class="col-md-6 ">
                             <label>Remarks </label>
                             <textarea  class="form-control " id="txtRemarks"></textarea>

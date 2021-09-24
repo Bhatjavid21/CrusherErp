@@ -1,22 +1,31 @@
 
 
 function ResetFields() {
-    $('#ddlcustomer').val(0);
+
+    SetInnerVal("PopUpTitle", "Add Purchase")
+    $('#PurchaseNo').html("");
+    $('#ddlSupplier').attr("disabled", false)
+    
+    $('#ddlproduct').attr("disabled", false)
+
+
+    $('#ddlSupplier').val(0);
     $('#ddlproduct').val(0);
     $('#txtQty').val("200");
     $('#txtRate').val("0.00") +
     $('#txtTrips').val("1");
     $('#txtSite').val("");
-    $('#txtPurchasePrice').val("0.00");
+    
     $('#txtFuelPrice').val("0.00");
-    $('#txtDiscount').val("0.00") +
+    
     $('#txtTotalCost').val("0.00");
     $('#txtvehicle').val("");
     $('#btnSave').html("Save")
     $('#txtRemarks').val("");
     $(".select2").select2();
 }
-function bindddls(IsEdit, Customer_Id,Product_Id) {
+function bindddls(IsEdit, Supplier_Id, Product_Id) {
+   
     $.ajax({
         url: 'Purchase.ashx',
         type: "POST",
@@ -26,14 +35,15 @@ function bindddls(IsEdit, Customer_Id,Product_Id) {
             if (Chk_Res(data.errorMessage) == false) {
                 if (data != "") {
                     var CustomerData = JSON.parse(data.split("|")[0]);
+                    
                     var Proddata = JSON.parse(data.split("|")[1]);
                     $('#PurchaseMaxNum').val(data.split("|")[2])
                     
                     //================Bind Customer===============
-                    $('#ddlcustomer').empty();
-                    $('#ddlcustomer').append($('<option>').text('Select Customer').attr('value', 0));
+                    $('#ddlSupplier').empty();
+                    $('#ddlSupplier').append($('<option>').text('Select Customer').attr('value', 0));
                     $.each(CustomerData, function (i, obj) {
-                        $('#ddlcustomer').append($('<option>').text(obj.Name.split(',').join(' ')).attr('value', obj.Id));
+                        $('#ddlSupplier').append($('<option>').text(obj.Name.split(',').join(' ')).attr('value', obj.Id));
                     });
 
                     $('#ddlproduct').empty();
@@ -43,11 +53,11 @@ function bindddls(IsEdit, Customer_Id,Product_Id) {
                     });
 
                     if (IsEdit == true) {
-                        $('#ddlcustomer').val(Customer_Id)
+                        $('#ddlSupplier').val(Supplier_Id)
                         $('#ddlproduct').val(Product_Id)
                     }
                     else {
-                        $('#ddlcustomer').val(0)
+                        $('#ddlSupplier').val(0)
                         $('#ddlproduct').val(0)
                     }
                     $(".select2").select2();
@@ -82,23 +92,22 @@ function CalculatePurchasePrice()
    var qty= $('#txtQty').val()
    var trips= $('#txtTrips').val();
    var fuel= $('#txtFuelPrice').val();
-   var discount = $('#txtDiscount').val() 
+  
 
     var PurchasePrice = (parseFloat(rate) * Number(qty)) * Number(trips);
 
-    var TotalCost = parseFloat(PurchasePrice) - parseFloat(discount) - parseFloat(fuel);
-    $('#txtPurchasePrice').val(PurchasePrice);
+    var TotalCost = parseFloat(PurchasePrice) - parseFloat(fuel);
+    
     $('#txtTotalCost').val(TotalCost);
 
 }
 function Save_Purchase() {
 
-    var InsertArray = $('#ddlcustomer').val() + "|" + $('#ddlproduct').val() + "|" +
-        $('#txtQty').val() + "|" + $('#txtRate').val() + "|" + $('#txtTrips').val() + "|" + $('#txtSite').val()
-        + "|" + $('#txtPurchasePrice').val() + "|" + $('#txtFuelPrice').val() + "|" + $('#txtDiscount').val()
-        + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() +"|" + $('#PurchaseMaxNum').val()
+    var InsertArray = $('#ddlSupplier').val() + "|" + $('#ddlproduct').val() + "|" +
+        $('#txtQty').val() + "|" + $('#txtRate').val() + "|" + $('#txtTrips').val() 
+        + "|" + $('#txtFuelPrice').val() + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() +"|" + $('#PurchaseMaxNum').val()
         
-    var Controls = "ddlcustomer,ddlproduct,txtQty,txtRate,txtTrips,txtSite,txtPurchasePrice,txtTotalCost,txtvehicle";
+    var Controls = "ddlSupplier,ddlproduct,txtQty,txtRate,txtTrips,txtSite,txtPurchasePrice,txtTotalCost,txtvehicle";
 
     if (setBorderColor_Validation(Controls)) {
         var caption = $('#btnSave').html();
@@ -142,7 +151,8 @@ function Save_Purchase() {
                         if (data != "") {
                            
                             $('#Popup').modal('toggle');
-                            calltoast("Updated Saved Sucessfully", "success");
+                            calltoast("Updated Sucessfully", "success");
+                            ListAllPurchase();
                         }
                     }
                 }
@@ -167,30 +177,36 @@ function Edit(Purchase_Id, Isview) {
                     var PurchaseData = JSON.parse(data)
 
                     $.each(PurchaseData, function (i, obj) {
-                        bindddls(true, obj.Customer_Id, obj.Product_Id);
-                        $('#ddlcustomer').attr("disabled", true)
-             
-                        $('#ddlproduct').attr("disabled", true)
-                        
+                        bindddls(true, obj.Supplier_Id, obj.Product_Id);
+                       
                         $('#hdn_Purchase_Id').val(obj.Id);
                         $('#txtQty').val(obj.Quantity);
                         $('#txtRate').val(obj.Rate) +
                         $('#txtTrips').val(obj.Trips);
-                        $('#txtSite').val(obj.Site);
-                        $('#txtPurchasePrice').val(obj.Purchase_Price);
+                        
                         $('#txtFuelPrice').val(obj.Fuel_Price);
-                        $('#txtDiscount').val(obj.Discount_Amount) +
+                        
                         $('#txtTotalCost').val(obj.Total_Cost);
                         $('#txtvehicle').val(obj.Vehicle_No);
 
                         $('#txtRemarks').val(obj.Remarks);
                         $('#btnSave').html("Update")
                         
-                        $('#PurchaseNo').html("<b>Purchase Order Number: </b>"+obj.Sale_Order_No)
+                        $('#PurchaseNo').html("<b>Purchase Order Number: </b>" + obj.Purchase_No)
                         SetInnerVal("PopUpTitle","Update Purchase")
                         
                         //AllContent
-                        btnSave
+                        if (Isview == 1) {
+                            $("#AllContent :input").prop("disabled", true);
+                            SetInnerVal("PopUpTitle", "View Sales")
+                        }
+                        else {
+
+                            $("#AllContent :input").prop("disabled", false);
+                            $('#ddlSupplier').attr("disabled", true)
+
+                            $('#ddlproduct').attr("disabled", true)
+                        }
                         $(".select2").select2();
                     });
                 }

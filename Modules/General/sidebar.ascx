@@ -40,9 +40,9 @@
                 </a>
             </li>
 
-            <li class="<%Response.Write(G.set_Submenu("report"));%>">
-                <a href="<%=G.S%>Reports/report-list.aspx">
-                    <i class="mdi mdi-mailbox"></i><span>Reports</span>
+            <li class="<%Response.Write(G.set_Submenu("Invoice"));%>">
+                <a href="<%=G.S%>Invoice/Invoice_list.aspx">
+                    <i class="mdi mdi-file"></i><span>Invoice</span>
                 </a>
             </li>
 
