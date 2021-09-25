@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" href="<%=G.B%>images/favicon.ico">
 
-    <title>SUS ERP - Log in </title>
+    <title>Stone Crusher System </title>
 
     <link rel="stylesheet" href="assets/vendor_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap-extend.css">
@@ -23,66 +23,37 @@
 <body class="hold-transition bg-img" style="" data-overlay="4" onload="loadpopup()">
     <input type="hidden" id="baseurl" name="baseurl" value="<%=ConfigurationManager.AppSettings["base_url"] %>" />
 
-    <div class="auth-2-outer row align-items-center h-p100 m-0">
-        <div class="auth-2">
-            <div class="auth-logo font-size-40">
-                <a href="index.html" class="text-white"><b>PILLAR</b> ERP</a>
-            </div>
-            <!-- /.login-logo -->
-            <div class="auth-body">
-                <p class="auth-msg">Sign in to start your session</p>
-
-                <form novalidate id="frm" runat="server" class="ajax-form form-element">
-                    <asp:Literal ID="ltrmsg" runat="server"></asp:Literal>
-
-
-                    <div class="form-group has-feedback">
-                        <div class="controls">
-                            <input type="email" class="form-control loginfont" name="txt_user_email" id="txt_user_email" placeholder="Email" required>
-                        </div>
-                        <span class="ion ion-email form-control-feedback"></span>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <input type="password" class="form-control loginfont" name="txt_user_password" id="txt_user_password" placeholder="Password" required="">
-                        <span class="ion ion-locked form-control-feedback"></span>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="checkbox">
-                                <input type="checkbox" id="basic_checkbox_1">
-                                <label for="basic_checkbox_1">Remember Me</label>
+    <div id="login">
+        <h3 class="text-center text-white ">Login</h3>
+        <div class="container">
+            <div id="login-row" class="row justify-content-center align-items-center">
+                <div id="login-column" class="col-md-6">
+                    <div id="login-box" class="col-md-12">
+                        <form id="frm" runat="server" class="form-element">
+                           
+                            <div class="form-group">
+                                <label for="username" class="text-info">Username:</label><br>
+                                <input type="email" class="form-control" name="txt_user_email" id="txt_user_email" placeholder="Username" required >                               
                             </div>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-6">
-                            <div class="fog-pwd">
-                                <a href="<%=G.S%>Login/forgot-password.aspx" class="text-white"><i class="ion ion-locked"></i>Forgot Password?</a><br>
+                            <div class="form-group">
+                                <label for="password" class="text-info">Password:</label><br>
+                                <input type="password" class="form-control" name="txt_user_password" id="txt_user_password" placeholder="Password" required>                            
                             </div>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-12 text-center">
-                            <input type="hidden" id="hdf_sysgen" value="0" runat="server" />
-                            <asp:HiddenField ID="txt_EmpID" runat="server" />
-                            <asp:Button ID="btnLogin" class="btn btn-block mt-10 btn-success p-10" runat="server" Text="SIGN IN" OnClick="btnLogin_Click" OnClientClick="errormesg()" />
-                        </div>
-
-                        <%--<div class="custom-control custom-checkbox mb-10">
-                            <i class="mdi mdi-plus plusicon" id="lnk-add_users" data-toggle="modal" data-target="#myModal"></i>
-                        </div>--%>
-
-                        <!-- /.col -->
+                            <div>
+                                &nbsp;
+                            </div>
+                            <div class="form-group">
+                                <a href="<%=G.S%>Login/forgot-password.aspx" class="link-primary"><i class="ion ion-locked"></i>Forgot Password?</a><br>
+                                <input type="hidden" id="hdf_sysgen" value="0" runat="server" />
+                                <asp:HiddenField ID="txt_EmpID" runat="server" />
+                                <asp:Button ID="btnLogin" class="btn btn-block mt-10 btn-success p-10" runat="server" Text="Login" OnClick="btnLogin_Click" />
+                                 <asp:Literal ID="ltrmsg" runat="server"></asp:Literal>
+                            </div>
+                        </form>
                     </div>
-
-
-
-                </form>
-
-
+                </div>
             </div>
         </div>
-
     </div>
 
 
@@ -169,7 +140,7 @@
     <!-- /Popup Model Plase Here -->
 
     <script src="Modules/General/libo.js"></script>
-    <script src="Modules/Login/login.js"></script>
+  <%--  <script src="Modules/Login/login.js"></script>--%>
 
     <script>
         function loadpopup() {
@@ -188,6 +159,30 @@
         }
 
     </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #17a2b8;
+            height: 100vh;
+        }
+
+        #login .container #login-row #login-column #login-box {
+            margin-top: 120px;
+            max-width: 600px;
+            height: 320px;
+            border: 1px solid #9C9C9C;
+            background-color: #EAEAEA;
+        }
+
+            #login .container #login-row #login-column #login-box #login-form {
+                padding: 20px;
+            }
+
+                #login .container #login-row #login-column #login-box #login-form #register-link {
+                    margin-top: -85px;
+                }
+    </style>
 </body>
 </html>
 

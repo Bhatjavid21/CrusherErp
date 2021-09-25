@@ -123,7 +123,7 @@
                         <li class="user-body">
                             <a class="dropdown-item" href="#" target="_blank" id="btnViewProfile" runat="server"><i class="ion ion-person"></i>My Profile</a>
                             <div class="dropdown-divider"></div>
-                            <div class="p-10"><a class="btn btn-sm btn-rounded btn-success" href="../../Default.aspx"><i class="ion-log-out"></i>Logout</a></div>
+                            <div class="p-10"><asp:LinkButton ID="lnkSignOut" runat="server" class="btn btn-sm btn-rounded btn-success" OnClick="lnkSignOut_Click"><i class="ion-log-out"></i>Logout</asp:LinkButton></div>
                         </li>
                     </ul>
                 </li>
@@ -196,4 +196,5 @@
     function openSupplier() {
         window.open("../Supplier/Supplier.aspx?enq=y", target = '_blank', 'toolbar=0,status=0,width=1360,height=650');
     }
+
 </script>

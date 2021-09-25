@@ -5,5 +5,5 @@
     <div class="pull-right d-none d-sm-inline-block">
         
     </div>
-	  &copy; <% DateTime.Now.Year.ToString(); %> <a href="http://www.domain.com/">Al Manal Management System</a>. All Rights Reserved.
+	  &copy; <% DateTime.Now.Year.ToString(); %> <a href="#">Stone Crusher System</a>. All Rights Reserved.
   </footer>

@@ -16,7 +16,8 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
     HttpContext Context; Int16 DF = 0;
     public void ProcessRequest(HttpContext context)
     {
-        Context = context; if (!string.IsNullOrEmpty(Context.Request["fun"]))
+        Context = context;
+        if (!string.IsNullOrEmpty(Context.Request["fun"]))
         {
             try
             {
@@ -34,7 +35,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                         break;
                     case "ListAllCustomer":
 
-                        ListAllCustomer(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]));
+                        ListAllCustomer(context.Request.Form["SearchString"], Convert.ToInt32(context.Request.Form["Page_No"]));
 
                         break;
                 }
@@ -46,15 +47,15 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
         Context.Response.Cache.SetCacheability(HttpCacheability.NoCache);
     }
     //*********************************View*********************************View******************************************View***********************************************************
-    void ListAllCustomer(string SearchString,int Page_No)
+    void ListAllCustomer(string SearchString, int Page_No)
     {
         string EditAccess = "True";
         string ApproveAccess = "True";
-        string output="";
+        string output = "";
         int TotalRecords = 0, from = 1, to = 20; if (Page_No == 0) { Page_No = 1; };
         // StringBuilder output = new StringBuilder();
         from = (((Page_No * 20) - 20) + 1); to = Page_No * 20;
-        string SourceTypeFilter="";
+        string SourceTypeFilter = "";
         //if(!SourceType.Equals("Select"))
         //{
         //    SourceTypeFilter=" and a.Source_Type='"+SourceType+"' ";
@@ -65,21 +66,21 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
         //{
         //    StatusFilter=" and a.Approval_Status="+status;
         //}
-        string SearchFilter="";
-        if(!SearchString.Equals(""))
+        string SearchFilter = "";
+        if (!SearchString.Equals(""))
         {
-            SearchFilter="and  ( a.Name like '%"+SearchString+"%' or  a.Business_Id like '%"+SearchString+"%' )";
+            SearchFilter = "and  ( a.Name like '%" + SearchString + "%' or  a.Business_Id like '%" + SearchString + "%' )";
         }
 
-        string  sql = "with NewTable as (select a.*,ROW_NUMBER() over (order by Id desc) as RowNum from tbl_customer_supplier a " +
-               "  where IsSupplier=0 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
+        string sql = "with NewTable as (select a.*,ROW_NUMBER() over (order by Id desc) as RowNum from tbl_customer_supplier a " +
+               "  where IsSupplier=0 " + SearchFilter + ") select * from NewTable where RowNum between " + from + " And " + to;
 
-        DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_customer_supplier a  where IsSupplier=0  "+SearchFilter);
+        DataTable dt = DB.GetDataTable(sql);
+        TotalRecords = DB.Get_ScalerInt("select count(a.Id) from tbl_customer_supplier a  where IsSupplier=0  " + SearchFilter);
 
-        if(dt.Rows.Count>0)
+        if (dt.Rows.Count > 0)
         {
-            foreach(DataRow dr in dt.Rows)
+            foreach (DataRow dr in dt.Rows)
             {
 
                 output += "<tr>" +
@@ -90,7 +91,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                        "<td>" + dr["Balance"] + "</td>";
 
 
-                if(dr["IsActive"].ToString().Equals("True"))
+                if (dr["IsActive"].ToString().Equals("True"))
                 {
                     output += "<td><span class='badge badge-success1'>Active</span></td>";
                 }
@@ -98,7 +99,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                 {
                     output += "<td><span class='badge badge-danger'>Inactive</span></td>";
                 }
-                output +=  "<td> "+
+                output += "<td> " +
                   "<div class='btn-group'>" +
                                             "<button data-toggle='dropdown' class='btn btn-outline btn-default dropdown-toggle' aria-expanded='true'>" +
                                                 "<span><i class='ti-settings'></i></span>" +
@@ -108,12 +109,12 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                    "<li class='dropdown-divider'></li>";
 
 
-                if(EditAccess.Equals("True"))
+                if (EditAccess.Equals("True"))
                 {
                     output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Getdata(this.id,0)'><i class='fa fa-edit'></i>Edit</a></li>" +
                 "<li class='dropdown-divider'></li>";
                 }
-                if(ApproveAccess.Equals("True"))
+                if (ApproveAccess.Equals("True"))
                 {
                     //output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AprovePopup' onclick='GetEstimatedAmnt(this.id)'><i class='fa fa-approve'></i>Approve</a></li>" +
                     //  "<li class='dropdown-divider'></li>";
@@ -123,12 +124,12 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                    "<li class='dropdown-divider'></li>";
                 output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AddPaymentPopup' onclick='AddPayment(this.id)'><i class='fa fa-money'></i>Add Payment</a></li>" +
                "<li class='dropdown-divider'></li>";
-                output+="</div> </td></tr>";
+                output += "</div> </td></tr>";
             }
         }
         else
         {
-            output+="<tr><td colspan='8'> No Records Found  </td></tr>";
+            output += "<tr><td colspan='8'> No Records Found  </td></tr>";
         }
         string str_Pagging = "", Paging_Strip = Pagination.PG(TotalRecords, Page_No, 20);
 
@@ -142,16 +143,16 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
 
                   + "</ul></div></div>";
         }
-        Context.Response.Write(output+"|"+str_Pagging);
+        Context.Response.Write(output + "|" + str_Pagging);
     }
     void Save_Customer(string InsertArray)
     {
-        int Ret=-9;
+        int Ret = -9;
         string[] Data = InsertArray.Split('|');
 
-        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[3] + "',0.00,'" + Data[4] + "','" + DateTime.Now.ToString("yyyy-MM-dd")+ "',null,1,0,'" + Data[2] + "')";
+        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[3] + "',0.00,'" + Data[4] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,0,'" + Data[2] + "')";
         Ret = DB.Get_ScalerInt(sql);
-        if(Ret>-1)
+        if (Ret > -1)
         {
             Context.Response.Write("Success");
         }

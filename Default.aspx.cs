@@ -5,6 +5,7 @@ using System.IO;
 using System.Configuration;
 using System.Security.Cryptography;
 using System.Web;
+using System.Web.Security;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -21,98 +22,53 @@ public partial class _Default : System.Web.UI.Page
         StringBuilder output = new StringBuilder();
         string email = Request.Form["txt_user_email"];
         string user_password = Request.Form["txt_user_password"];
-
-        string pword = Encrypt(user_password);
-        try
+        if (ValidateUser(email, user_password))
         {
-            //if (email == "Admin@CrusherErp.com" && user_password == "Admin")
-            //{
-            //    Response.Redirect("Modules/General/dashboard.aspx");
-            //}
-            //else
-            //{
-            //    ltrmsg.Text = "";
-            //    ltrmsg.Text += "<div class=\"alert alert-dismissible fade show\" role=\"alert\" style=\"background-color:red\">";
-            //    ltrmsg.Text += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span>×</span></button>";
-            //    ltrmsg.Text += " Invalid Email Or Password!";
-            //    ltrmsg.Text += " </div>";
+            FormsAuthentication.RedirectFromLoginPage(email, true);
+            FormsAuthenticationTicket tkt;
+            string cookiestr;
+            HttpCookie ck;
+            tkt = new FormsAuthenticationTicket(email, true, 30);
+            cookiestr = FormsAuthentication.Encrypt(tkt);
+            ck = new HttpCookie(FormsAuthentication.FormsCookieName, cookiestr);
+            ck.Expires = tkt.Expiration;
+            ck.Path = FormsAuthentication.FormsCookiePath;
+            Response.Cookies.Add(ck);
 
-            //    // output.Append("Invalid Username or Password!");
-            //}
-
-            SqlDataReader dtb = DB.Get_temp("Select A.Employee_Id, A.Is_System_Generated, B.Branch_Id, B.Photo, replace(B.Employee_Name,',',' ') as Employee_Name, B.Email from tbl_User_Details as A " +
-               "  inner join tbl_Employee as B on B.Employee_Id = A.Employee_Id " +
-               "  Where  A.Status='true' AND A.IsDeleted='false' AND Email_Id='" + email + "' AND User_Password='" + pword + "'");
-
-            //SqlDataReader dtb = DB.Get_temp("Select A.User_Id, A.Employee_Id, A.Is_System_Generated, B.Branch_Id, C.Division_id from tbl_User_Details as A " +
-            // "  inner join tbl_Employee as B on B.Employee_Id = A.Employee_Id " +
-            // "  inner join tbl_Employee_Division_Mapping as C on C.Employee_Id = A.Employee_Id " +
-            // "  Where C.Is_Default_Division='true' AND A.Status='true' AND Email_Id='" + email + "' AND User_Password='" + pword + "'");
-
-            int chkb = 0;
-            string System_Generated_val = "True";
-            int branchId = 0;
-            string divisionId = "0";
-            string empOtherDetails = "";
-            string multi_session_ids = "";
-
-            while (dtb.Read())
-            {
-                chkb = Convert.ToInt32(dtb["Employee_Id"]);
-                System_Generated_val = dtb["Is_System_Generated"].ToString();
-                branchId = Convert.ToInt32(dtb["Branch_Id"]);
-                empOtherDetails = dtb["Photo"].ToString() + "|" + dtb["Employee_Name"].ToString() + "|" + dtb["Email"].ToString();
-
-                SqlDataReader divId = DB.Get_temp("Select Division_id from tbl_Employee_Division_Mapping Where Is_Default_Division='True'" +
-                  " AND Employee_Id=" + Convert.ToInt32(dtb["Employee_Id"]) + " and Is_Mapped='True'");
-                if (divId.HasRows)
-                {
-                    while (divId.Read())
-                    {
-                        divisionId = divId["Division_id"].ToString();
-                    }
-                }
-                else
-                {
-                    divisionId = "No Division";
-                }
-            }
-            if (chkb != 0)
-            {
-                // multi_session_ids = chkb + "," + branchId + "," + divisionId + ",dd/MM/yyyy";
-
-                multi_session_ids = chkb + "," + branchId + "," + divisionId + ",103," + empOtherDetails;
-
-                Session["session_ids"] = multi_session_ids;
-
-                if (System_Generated_val == "False")
-                {
-                    Response.Redirect("Modules/General/dashboard.aspx");
-                }
-                else
-                {
-                    txt_EmpID.Value = chkb.ToString();
-                    hdf_sysgen.Value = "1";
-                }
-            }
-            else
-            {
-                ltrmsg.Text = "";
-                ltrmsg.Text += "<div class=\"alert alert-dismissible fade show\" role=\"alert\" style=\"background-color:red\">";
-                ltrmsg.Text += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span>×</span></button>";
-                ltrmsg.Text += " Invalid Email Or Password!";
-                ltrmsg.Text += " </div>";
-
-                // output.Append("Invalid Username or Password!");
-            }
-            dtb.Close();
+            Response.Redirect("~/Modules/General/Dashboard.aspx", true);
         }
-        catch (Exception x)
+        else
         {
+            ltrmsg.Text = "";
+            ltrmsg.Text += "<div class=\"alert alert-dismissible fade show\" role=\"alert\" style=\"background-color:red\">";
+            ltrmsg.Text += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span>×</span></button>";
+            ltrmsg.Text += " Invalid Email Or Password!";
+            ltrmsg.Text += " </div>";
 
         }
     }
+    private bool ValidateUser(string email, string password)
+    {
+        string username = "";
+        string pwd = "";
+        SqlDataReader sqlDataReader = DB.Get_temp("select Login,Password from tbl_user where Login='" + email + "' and Password='" + password + "'");
 
+        while (sqlDataReader.Read())
+        {
+            username = sqlDataReader["Login"] + "";
+            pwd = sqlDataReader["Password"] + "";
+        }
+        sqlDataReader.Close();
+        if (username.Equals(email) && pwd.Equals(password))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
     public static string Encrypt(string plainText)
     {
 

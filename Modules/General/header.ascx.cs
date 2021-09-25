@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -29,5 +30,11 @@ public partial class user_controls_header : System.Web.UI.UserControl
 
             btnViewProfile.HRef = "../../Modules/Employee/profile.aspx?empid=" + employeeId + "&v=1";
         }
+    }
+
+    protected void lnkBtnSignOut_Click(object sender, EventArgs e)
+    {
+        FormsAuthentication.SignOut();
+        Response.Redirect("../../Default.aspx", true);
     }
 }

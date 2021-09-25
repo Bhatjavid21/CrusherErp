@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="dashboard.aspx.cs" Inherits="dashboard" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Dashboard.aspx.cs" Inherits="dashboard" %>
 
 <%@ Register Src="~/Modules/General/header.ascx" TagName="uch" TagPrefix="uc1" %>
 <%@ Register Src="~/Modules/General/sidebar.ascx" TagName="ucs" TagPrefix="uc2" %>
@@ -17,7 +17,7 @@
     <meta name="author" content="">
     <link rel="icon" href="<%=G.B%>assets/images/favicon.ico">
 
-    <title>Trading ERP - Dashboard</title>
+    <title>Stone Crusher System - Dashboard</title>
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="<%=G.B%>assets/css/bootstrap-extend.css">
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/clockpicker/dist/jquery-clockpicker.min.css">
@@ -40,6 +40,7 @@
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/jquery.autocomplete/easy-autocomplete.css">
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/icheck/skins/all.css">
     <link rel="stylesheet" type="text/css" href="<%=G.B%>assets/js/froiden-helper/helper.css">
+    <script src="https://kit.fontawesome.com/ce15a19fdb.js" crossorigin="anonymous"></script>
     <style>
         .chat-body {
             background: #eee;
@@ -102,363 +103,145 @@
 </head>
 
 <body class="hold-transition fixed skin-info-light sidebar-mini">
-    <div class="wrapper">
+    <form id="frm" runat="server">
+        <div class="wrapper">
 
-        <uc1:uch ID="uch1" runat="server" />
-        <uc2:ucs ID="ucs1" runat="server" />
+            <uc1:uch ID="uch1" runat="server" />
+            <uc2:ucs ID="ucs1" runat="server" />
 
-        <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
-            <input type="hidden" id="hdfmode" value="">
-            <input type="hidden" id="hid_Task_Main_Id" value="0" />
-            <!-- Content Header (Page header) -->
-            <div class="content-header display-none">
-                <div class="d-flex align-items-center">
-                    <div class="mr-auto">
-                        <h3 class="page-title">Dashboard</h3>
-                        <div class="d-inline-block align-items-center">
-                            <nav>
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Main content -->
-            <section class="content">
-                <div class="box">
-                    <div class="box-body ">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li class="nav-item"><a class="nav-link active pl-40 pr-40" id="lnk-calender" data-toggle="tab" href="#calender" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span><span class="hidden-xs-down">Calender</span></a> </li>
-                                    <li class="nav-item" onclick="Bind_DDL_Assigned_To('');Bind_Tasks_To_List();"><a class="nav-link pl-40 pr-40" id="lnk-list" data-toggle="tab" href="#list" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span><span class="hidden-xs-down">List</span></a> </li>
-                                </ul>
-                                <div class="tab-content mt-10">
-                                    <div id="calendarFilter">
-                                        <div class="row">
-                                            <div class="col-md-3 col-sm-6 col-12">
-                                                <label>Task Type</label>
-                                                <div class="form-group ">
-                                                    <div class="input-group">
-                                                        <table>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="form-group input-group mb-0 ml-0">
-                                                                        <div class="checkbox text-xs-left fnt11 ">
-                                                                            <ul class="icheck-list">
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2 checked leave-left-border checked" id="div_All_Task_Calendar" onclick="FilterCalendar(this,1);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Open" id="rbt_All_Task_Calendar" data-id="0" />
-                                                                                        All<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2" id="div_My_Task_Calendar" onclick="FilterCalendar(this,1);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="High" id="rbt_My_Task_Calendar" data-id="0" />
-                                                                                        My Tasks<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2 leave-right-border" id="div_Other_Tasks_Calendar" onclick="FilterCalendar(this,1);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Closed" id="rbt_Other_Tasks_Calendar" data-id="0" />
-                                                                                        Other Tasks<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-
-                                                                                <li><i class="mdi mdi-information-outline" title="Clicking on any of the tiles filters "></i></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 col-sm-6 col-12">
-                                                <label>Priority</label>
-                                                <div class="form-group ">
-                                                    <div class="input-group">
-                                                        <table>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="form-group input-group mb-0 ml-0">
-                                                                        <div class="checkbox text-xs-left fnt11 ">
-                                                                            <ul class="icheck-list">
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2 checked leave-left-border checked" id="div_All_Priority_Calendar" onclick="FilterCalendar(this,2);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="All" id="rbt_All_Priority_Calendar" data-id="0" />
-                                                                                        All<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2" id="div_High_Priority_Calendar" onclick="FilterCalendar(this,2);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="High" id="rbt_High_Priority_Calendar" data-id="0" />
-                                                                                        High<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2" id="div_Medium_Priority_Calendar" onclick="FilterCalendar(this,2);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Medium" id="rbt_Medium_Priority_Calendar" data-id="0" />
-                                                                                        Medium<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2 leave-right-border" id="div_Low_Priority_Calendar" onclick="FilterCalendar(this,2);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Low" id="rbt_Low_Priority_Calendar" data-id="0" />
-                                                                                        Low<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-
-                                                                                <li><i class="mdi mdi-information-outline" title="Clicking on any of the tiles filters "></i></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 col-sm-6 col-12">
-                                                <label>Status</label>
-                                                <div class="form-group ">
-                                                    <div class="input-group">
-                                                        <table>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="form-group input-group mb-0 ml-0">
-                                                                        <div class="checkbox text-xs-left fnt11 ">
-                                                                            <ul class="icheck-list">
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2 checked leave-left-border checked" id="div_All_Status_Calendar" onclick="FilterCalendar(this,3);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Open" id="rbt_All_Status_Calendar" data-id="0" />
-                                                                                        All<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2" id="div_Open_Status_Calendar" onclick="FilterCalendar(this,3);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="High" id="rbt_Open_Status_Calendar" data-id="0" />
-                                                                                        Open<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <div class="iradio_line-red grp2 leave-right-border" id="div_Closed_Status_Calendar" onclick="FilterCalendar(this,3);">
-                                                                                        <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Closed" id="rbt_Closed_Status_Calendar" data-id="0" />
-                                                                                        Closed<ins class="iCheck-helper"></ins>
-                                                                                    </div>
-                                                                                </li>
-
-
-                                                                                <li><i class="mdi mdi-information-outline" title="Clicking on any of the tiles filters "></i></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane active" id="calender" role="tabpanel">
-
-                                        <%--<div class="row mb-5">
-                                            <div class="col-md-6">
-                                                <button type="button" class="btn btn-success" aria-label="next"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
-                                                <button class="btn btn-success" aria-label="prev"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-                                            </div>
-                                        </div>--%>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <!-- THE CALENDAR -->
-                                                <div id="calendar"></div>
-                                            </div>
-                                            <!-- /.box-body -->
-                                        </div>
-                                        <div class="box-footer mb-40"></div>
-                                    </div>
-
-                                    <div class="tab-pane pb-20" id="list" role="tabpanel">
-                                        <div class="row mb-30">
-                                            <div class="col-md-12">
-                                                <div class="vtabs">
-                                                    <ul class="nav nav-tabs tabs-vertical" role="tablist">
-                                                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tasksTab" role="tab" id="btn_My_Task"><span class="hidden-sm-up"><i class="ion-home"></i></span><span class="hidden-xs-down">My Tasks</span> </a></li>
-                                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tasksTab" role="tab" id="btn_Other_Task"><span class="hidden-sm-up"><i class="ion-person"></i></span><span class="hidden-xs-down">Others Tasks</span></a> </li>
-
-                                                    </ul>
-                                                    <!-- Tab panes -->
-                                                    <div class="tab-content">
-                                                        <div class="tab-pane active" id="tasksTab" role="tabpanel">
-                                                            <div class="pad">
-                                                                <div class="row">
-                                                                    <div class="col-md-3 col-sm-6 col-12">
-                                                                        <label>Priority</label>
-                                                                        <div class="form-group ">
-                                                                            <div class="input-group">
-                                                                                <table>
-                                                                                    <tr>
-                                                                                        <td>
-                                                                                            <div class="form-group input-group mb-0 ml-0">
-                                                                                                <div class="checkbox text-xs-left fnt11 ">
-                                                                                                    <ul class="icheck-list">
-
-                                                                                                        <li>
-                                                                                                            <div class="iradio_line-red grp2 checked leave-left-border checked" id="div_all" onclick="FilterList(this,1);">
-                                                                                                                <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="All" id="btn_all" data-id="0" />
-                                                                                                                All<ins class="iCheck-helper"></ins>
-                                                                                                            </div>
-                                                                                                        </li>
-
-                                                                                                        <li>
-                                                                                                            <div class="iradio_line-red grp2" id="div_High" onclick="FilterList(this,1);">
-                                                                                                                <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="High" id="btn_High" data-id="0" />
-                                                                                                                High<ins class="iCheck-helper"></ins>
-                                                                                                            </div>
-                                                                                                        </li>
-
-                                                                                                        <li>
-                                                                                                            <div class="iradio_line-red grp2" id="div_Medium" onclick="FilterList(this,1);">
-                                                                                                                <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Medium" id="btn_Medium" data-id="0" />
-                                                                                                                Medium<ins class="iCheck-helper"></ins>
-                                                                                                            </div>
-                                                                                                        </li>
-
-                                                                                                        <li>
-                                                                                                            <div class="iradio_line-red grp2 leave-right-border" id="div_Low" onclick="FilterList(this,1);">
-                                                                                                                <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Low" id="btn_Low" data-id="0" />
-                                                                                                                Low<ins class="iCheck-helper"></ins>
-                                                                                                            </div>
-                                                                                                        </li>
-
-                                                                                                        <li><i class="mdi mdi-information-outline" title="Clicking on any of the tiles filters "></i></li>
-                                                                                                    </ul>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </table>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-3 col-sm-6 col-12">
-                                                                        <label>Status</label>
-                                                                        <div class="form-group ">
-
-                                                                            <div class="input-group">
-
-                                                                                <table>
-                                                                                    <tr>
-                                                                                        <td>
-                                                                                            <div class="form-group input-group mb-0 ml-0">
-                                                                                                <div class="checkbox text-xs-left fnt11 ">
-                                                                                                    <ul class="icheck-list">
-
-                                                                                                        <li>
-                                                                                                            <div class="iradio_line-red grp2 checked leave-left-border checked" id="div_Open" onclick="FilterList(this,2);">
-                                                                                                                <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Open" id="btn_Open" data-id="0" />
-                                                                                                                Open<ins class="iCheck-helper"></ins>
-                                                                                                            </div>
-                                                                                                        </li>
-
-                                                                                                        <li>
-                                                                                                            <div class="iradio_line-red grp2 leave-right-border" id="div_Closed" onclick="FilterList(this,2);">
-                                                                                                                <input type="radio" class="check" name="grpfor" data-radio="iradio_line-red grp2" data-label="Closed" id="btn_Closed" data-id="0" />
-                                                                                                                Closed<ins class="iCheck-helper"></ins>
-                                                                                                            </div>
-                                                                                                        </li>
-
-
-                                                                                                        <li><i class="mdi mdi-information-outline" title="Clicking on any of the tiles filters "></i></li>
-                                                                                                    </ul>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </table>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-6 mt-25">
-                                                                        <button class="btn btn-success right" data-toggle="modal" data-target="#taskPopup" id="btn_Add_Task"><i class="mdi mdi-plus plusicon"></i>Add</button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <table class="table table-bordered">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>Task Name</th>
-                                                                                    <th>Priority</th>
-                                                                                    <th>Target Date/Time</th>
-                                                                                    <th>Status</th>
-                                                                                    <th>Action</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody id="tbody_Task_Main">
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="box-footer mb-40"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <input type="hidden" id="hdfmode" value="">
+                <input type="hidden" id="hid_Task_Main_Id" value="0" />
+                <!-- Content Header (Page header) -->
+                <div class="content-header display-none">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-auto">
+                            <h3 class="page-title">Dashboard</h3>
+                            <div class="d-inline-block align-items-center">
+                                <nav>
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                                    </ol>
+                                </nav>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
-                <!-- /.row -->
-            </section>
-            <!-- /.content -->
+                <!-- Main content -->
+
+                <h5 class="mt-3 mb-4 text">Dashboard</h5>
+                <br />
+                <div class="container d-flex  mt-4">
+
+                    <br />
+                    <div class="p-3 mt-3 rounded border">
+                        <a href="#">
+                            <div class=" p-2  d-flex flex-row align-items-center">
+                                <div class="p-1 px-4 d-flex flex-column align-items-center rounded"><span class="d-block char text-success">
+                                    <asp:Literal ID="ltrCustomers" runat="server" Text="240"></asp:Literal></span></div>
+                            </div>
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="ml-2 p-3 d-inline">                                   
+                                    <h6 class="heading1"><i class="fas fa-user-friends"></i>  Customers</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="p-3 mt-3 ml-10 rounded border">
+                        <a href="#">
+                            <div class=" p-2  d-flex flex-row align-items-center">
+                                <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
+                                    <asp:Literal ID="ltrProducts" runat="server" Text="4"></asp:Literal></span></div>
+                            </div>
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="ml-2 p-3 d-inline">                                   
+                                    <h6 class="heading1"><i class="fas fa-shopping-basket"></i>  Products</h6>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                    <div class="p-3 mt-3 ml-10 rounded border">
+                        <a href="#">
+                            <div class=" p-2  d-flex flex-row align-items-center">
+                                <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
+                                    <asp:Literal ID="ltrSuppliers" runat="server" Text="34"></asp:Literal></span></div>
+                            </div>
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="ml-2 p-3 d-inline">                                   
+                                    <h6 class="heading1"><i class="fas fa-truck-moving"></i>  Suppliers</h6>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                    <div class="p-3 mt-3 ml-10 rounded border">
+                        <a href="#">
+                            <div class=" p-2  d-flex flex-row align-items-center">
+                                <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
+                                    <asp:Literal ID="ltsPurchases" runat="server" Text="300"></asp:Literal></span></div>
+                            </div>
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="ml-2 p-3 d-inline">                                    
+                                    <h6 class="heading1"><i class="fas fa-shopping-cart"></i>  Purchases</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="p-3 mt-3 ml-10 rounded border">
+                        <a href="#">
+                            <div class=" p-2  d-flex flex-row align-items-center">
+                                <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
+                                    <asp:Literal ID="ltrSales" runat="server" Text="1001"></asp:Literal></span></div>
+                            </div>
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="ml-2 p-3 d-inline">                                   
+                                    <h6 class="heading1"><i class="fas fa-balance-scale"></i>  Sales</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="p-3 mt-3 ml-10 rounded border">
+                        <a href="#">
+                            <div class=" p-2  d-flex flex-row align-items-center">
+                                <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
+                                    <asp:Literal ID="ltrInvoices" runat="server" Text="356"></asp:Literal></span></div>
+                            </div>
+                            <div class="d-flex flex-row align-items-center">
+                                <div class="ml-2 p-3 d-inline">                                   
+                                    <h6 class="heading1"><i class="fas fa-file-invoice-dollar"></i>  Invoices</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- /.content -->
+            </div>
+
+            <uc3:ucf ID="ucf1" runat="server" />
         </div>
+        <!-- ./wrapper -->
 
-        <uc3:ucf ID="ucf1" runat="server" />
-    </div>
-    <!-- ./wrapper -->
+        <!-- BEGIN MODAL -->
+        <div class="modal none-border" id="taskPopup">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="col-md-4">
+                            <h4 class="modal-title" id="lbl_Modal_Title"><strong>Add Task</strong></h4>
+                        </div>
+                        <div class="col-md-8 right">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <button type="button" class="close fa fa-pencil pt-20 hide" id="btn_Enable_Task_Controls"></button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class='col-md-6'>
 
-    <!-- BEGIN MODAL -->
-    <div class="modal none-border" id="taskPopup">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="col-md-4">
-                        <h4 class="modal-title" id="lbl_Modal_Title"><strong>Add Task</strong></h4>
-                    </div>
-                    <div class="col-md-8 right">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <button type="button" class="close fa fa-pencil pt-20 hide" id="btn_Enable_Task_Controls"></button>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class='col-md-6'>
-                          
                                 <label class='control-label'>Task Name <span class="red-bold">*</span></label>
                                 <input class='form-control enq-txtbx-pd' type="text" maxlength="50" id="txt_Task_Name" />
 
@@ -469,65 +252,65 @@
                                     </button>
                                 </div>
                             </div>
-                     
-                        <div class='col-md-6'>
-                            <label class="">
-                                Assigned To <span class="red-bold">*</span></label>
-                           
+
+                            <div class='col-md-6'>
+                                <label class="">
+                                    Assigned To <span class="red-bold">*</span></label>
+
                                 <select class="form-control enq-txtbx-pd fnt11 enq-dropdown select2" id="ddl_Assigned_To" multiple required>
                                 </select>
-                            
-                        </div>
 
-                        <div class='col-md-3'>
-                            <div class='form-group'>
-                                <label class='control-label'>Task Date <span class="red-bold">*</span></label>
-                                <input class='form-control enq-txtbx-pd' type='date' id="txt_Task_Date" />
                             </div>
-                        </div>
 
-                        <div class='col-md-3'>
-                            <div class='form-group'>
-                                <label class='control-label'>End Date <span class="red-bold">*</span></label>
-                                <input class='form-control enq-txtbx-pd' type='date' id="txt_End_Date" />
+                            <div class='col-md-3'>
+                                <div class='form-group'>
+                                    <label class='control-label'>Task Date <span class="red-bold">*</span></label>
+                                    <input class='form-control enq-txtbx-pd' type='date' id="txt_Task_Date" />
+                                </div>
                             </div>
-                        </div>
 
-                        <div class='col-md-2'>
-                            <div class='form-group'>
-                                <label class='control-label'>Task Time <span class="red-bold">*</span></label><div class="input-group clockpicker " data-placement="right" data-align="top" data-autoclose="true">
-                                    <input type="text" class="form-control enq-txtbx-pd fa fa-clock-o" value="" id="txt_Task_Time">
+                            <div class='col-md-3'>
+                                <div class='form-group'>
+                                    <label class='control-label'>End Date <span class="red-bold">*</span></label>
+                                    <input class='form-control enq-txtbx-pd' type='date' id="txt_End_Date" />
+                                </div>
+                            </div>
+
+                            <div class='col-md-2'>
+                                <div class='form-group'>
+                                    <label class='control-label'>Task Time <span class="red-bold">*</span></label><div class="input-group clockpicker " data-placement="right" data-align="top" data-autoclose="true">
+                                        <input type="text" class="form-control enq-txtbx-pd fa fa-clock-o" value="" id="txt_Task_Time">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='col-md-2'>
+                                <div class='form-group'>
+                                    <label class='control-label'>End Time <span class="red-bold">*</span></label><div class="input-group clockpicker " data-placement="right" data-align="top" data-autoclose="true">
+                                        <input type="text" class="form-control enq-txtbx-pd fa fa-clock-o" value="" id="txt_End_Time">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class='col-md-2'>
+                                <div class='form-group'>
+                                    <label class='control-label'>Priority <span class="red-bold">*</span></label>
+                                    <select class="form-control enq-dropdown select2" id="ddl_Task_Priority">
+                                        <option value="0">Select</option>
+                                        <option value="1">Low</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">High</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class='col-md-12'>
+                                <div class='form-group'>
+                                    <label class='control-label'>Task Description <span class="red-bold">*</span></label>
+                                    <textarea class='form-control' rows="2" onkeyup="inputDynamicHeight(this);" maxlength="200" id="txt_Task_Description"></textarea>
                                 </div>
                             </div>
                         </div>
-
-                        <div class='col-md-2'>
-                            <div class='form-group'>
-                                <label class='control-label'>End Time <span class="red-bold">*</span></label><div class="input-group clockpicker " data-placement="right" data-align="top" data-autoclose="true">
-                                    <input type="text" class="form-control enq-txtbx-pd fa fa-clock-o" value="" id="txt_End_Time">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class='col-md-2'>
-                            <div class='form-group'>
-                                <label class='control-label'>Priority <span class="red-bold">*</span></label>
-                                <select class="form-control enq-dropdown select2" id="ddl_Task_Priority">
-                                    <option value="0">Select</option>
-                                    <option value="1">Low</option>
-                                    <option value="2">Medium</option>
-                                    <option value="3">High</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class='col-md-12'>
-                            <div class='form-group'>
-                                <label class='control-label'>Task Description <span class="red-bold">*</span></label>
-                                <textarea class='form-control' rows="2" onkeyup="inputDynamicHeight(this);" maxlength="200" id="txt_Task_Description"></textarea>
-                            </div>
-                        </div>
-                    </div>
                     </div>
                     <div class="modal-footer">
                         <div class="row">
@@ -541,44 +324,25 @@
                     <div class="modal-body none-border hide" id="divComments">
                         <div id="div_Task_Comments">
                         </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button type="button" id="btn_Save_Exit_Task_Comments" class="btn btn-success right" onclick="Insert_Task_Comment('exit');"><i class="fa fa-save"></i>&nbsp;Save & Exit</button>
-                                    <button type="button" id="btn_Save_Stay_Task_Commments" class="btn btn-success right mr-5" onclick="Insert_Task_Comment('stay');"><i class="fa fa-save"></i>&nbsp;Save & Stay</button>
-                                    <button type="button" class="btn btn-dark " data-dismiss="modal" id="btn_Task_Comment_Popup_Close"><i class="fa fa-close"></i>&nbsp;Close</button>
-                                </div>
-                                <div class="col-md-2 pl-0">
-                                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" id="btn_Save_Exit_Task_Comments" class="btn btn-success right" onclick="Insert_Task_Comment('exit');"><i class="fa fa-save"></i>&nbsp;Save & Exit</button>
+                                <button type="button" id="btn_Save_Stay_Task_Commments" class="btn btn-success right mr-5" onclick="Insert_Task_Comment('stay');"><i class="fa fa-save"></i>&nbsp;Save & Stay</button>
+                                <button type="button" class="btn btn-dark " data-dismiss="modal" id="btn_Task_Comment_Popup_Close"><i class="fa fa-close"></i>&nbsp;Close</button>
+                            </div>
+                            <div class="col-md-2 pl-0">
                             </div>
                         </div>
-                
-                </div>
-            
-        </div>
-    </div>
-
-    <%--<div class="modal none-border" id="chat">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div id="div_Task_Comments">
-                </div>
-                <div class="modal-footer">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" id="btn_Save_Exit_Task_Comments" class="btn btn-success right" onclick="Insert_Task_Comment('exit');">Save & Exit</button>
-                            <button type="button" id="btn_Save_Stay_Task_Commments" class="btn btn-success right mr-5" onclick="Insert_Task_Comment('stay');">Save & Stay</button>
-                            <button type="button" class="btn btn-dark " data-dismiss="modal" id="btn_Task_Comment_Popup_Close">Close</button>
-                        </div>
-                        <div class="col-md-2 pl-0">
-                        </div>
                     </div>
+
                 </div>
+
             </div>
         </div>
-    </div>--%>
 
+    </form>
     <script src="<%=G.B%>assets/vendor_components/popper/dist/popper.min.js"></script>
 
     <script src="<%=G.B%>assets/vendor_components/jquery-3.3.1/jquery-3.3.1.js"></script>
@@ -602,5 +366,38 @@
     <script>
         $('.select2').select2();
     </script>
+    <style>
+        .card {
+            width: 380px;
+            border: none
+        }
+
+        .border {
+            border-radius: 12px
+        }
+
+        .score {
+            background-color: #dcddea
+        }
+
+        .heading1 {
+            color: #0D47A1;
+            font-size: 20px;
+        }
+
+        .text {
+            color: #0D47A1
+        }
+
+        .speed {
+            background-color: #FFE082
+        }
+
+        .char {
+            font-size: 50px;
+            font-weight: 700;
+            color: #4bbe36 !important;
+        }
+    </style>
 </body>
 </html>

@@ -84,7 +84,7 @@
                         <li class="user-body">
                             <a class="dropdown-item" href="#" target="_blank" id="btnViewProfile" runat="server"><i class="ion ion-person"></i>My Profile</a>
                             <div class="dropdown-divider"></div>
-                            <div class="p-10"><a class="btn btn-sm btn-rounded btn-success" href="<%=G.S%>general/logout.aspx"><i class="ion-log-out"></i>Logout</a></div>
+                            <div class="p-10"><asp:LinkButton ID="lnkBtnSignOut" runat="server" class="btn btn-sm btn-rounded btn-success" OnClick="lnkBtnSignOut_Click"><i class="ion-log-out"></i>Logout</asp:LinkButton></div>
                         </li>
                     </ul>
                 </li>
