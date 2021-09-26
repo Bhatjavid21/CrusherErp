@@ -29,7 +29,7 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
 
                     case "Save_Invoice":
 
-                        Save_Invoice(context.Request.Form["InsertArray"]);
+                        Save_Invoice(context.Request.Form["MainArray"],context.Request.Form["TableData"]);
 
                         break;
                     case "ListAllInvoice":
@@ -49,6 +49,9 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
                     case "Update_Invoice":
                         Update_Invoice(context.Request.Form["InsertArray"], context.Request.Form["Invoice_Id"]);
                         break;
+                    case "GetSalesItems":
+                        GetSalesItems(context.Request.Form["Cus_Id"],context.Request.Form["Frmdate"],context.Request.Form["Todate"]);
+                        break;
                 }
                 //  }
                 //  else { Context.Response.Write("SessionIsDead"); }
@@ -65,8 +68,14 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
         {
             jasonString1 = JsonConvert.SerializeObject(Dt);
         }
+        string jasonString2 = "";
+        DataTable Dt1 = DB.GetDataTable("select * from tbl_Invoice_Items where Invoice_Id="+Invoice_Id);
+        if (Dt.Rows.Count > 0)
+        {
+            jasonString2 = JsonConvert.SerializeObject(Dt1);
+        }
 
-        Context.Response.Write(jasonString1);
+        Context.Response.Write(jasonString1+"|"+jasonString2);
     }
     void bindddls()
     {
@@ -81,17 +90,26 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
         {
             jasonString1 = "";
         }
-        DataTable dt2 = DB.GetDataTable("select Id,Product_Name from tbl_Product");
-        if (dt2.Rows.Count > 0)
+
+
+        Context.Response.Write(jasonString1);
+    }
+    void GetSalesItems(string Customer_id,string Fromdate,string Todate )
+    {
+        string jasonString1 = "";
+
+        DataTable Dt = DB.GetDataTable("select a.id,a.Sale_order_no,a.Sale_Date,b.product_name,a.quantity,a.trips,a.fuel_price,a.total_cost from tbl_Sales a left outer join tbl_Product b on a.product_id=b.id where Customer_id="+Customer_id +" and a.Sale_Date between '"+Fromdate+"' and  '"+Todate+"'");
+        if (Dt.Rows.Count > 0)
         {
-            jasnString2 = JsonConvert.SerializeObject(dt2);
+            jasonString1 = JsonConvert.SerializeObject(Dt);
         }
         else
         {
-            jasnString2 = "";
+            jasonString1 = "";
         }
-        Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Invoice)  select Max(id) as Max_Id from tbl_Invoice else select 0 as Max_Id")+1;
-        Context.Response.Write(jasonString1 + "|" + jasnString2+"|"+Max_Number.ToString());
+
+
+        Context.Response.Write(jasonString1);
     }
     void GetRate(string Product_id)
     {
@@ -121,31 +139,27 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
         string SearchFilter="";
         if(!SearchString.Equals(""))
         {
-            SearchFilter="and  ( a.Sale_Order_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
+            SearchFilter="and  ( a.Invoice_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
         }
 
-        string  sql = "With NewTable as( select a.*,b.Id as CusId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Invoice a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id "+
-                      " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
+        string  sql = "with newtable as ( select  a.Id,a.Invoice_No,Invoice_Date,b.Name,a.From_Date,a.To_Date,a.Invoice_Amount,ROW_NUMBER() over (order by a.Id desc) as RowNum from Tbl_Invoice a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id where 1=1 "+SearchFilter+") select * from newtable where RowNum between "+from+" And "+to;
 
         DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Invoice a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter);
+        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Invoice a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id  where 1=1  "+SearchFilter);
 
         if(dt.Rows.Count>0)
         {
             foreach(DataRow dr in dt.Rows)
             {
-
+                string NoofSales = DB.Get_Scaler(" select count(Item_Id) from Tbl_Invoice_Items where Invoice_Id= " + dr["Id"]);
                 output += "<tr>" +
-                       "<td>" + Convert.ToDateTime(dr["Sale_Date"]).ToString("dd-MM-yyyy") + "</td>" +
+
+                       "<td>" + Convert.ToDateTime(dr["Invoice_Date"]).ToString("dd-MM-yyyy")+ "</td>" +
                        "<td>" + dr["Name"] + "</td>" +
-                       "<td>" + dr["Product_Name"] + "</td>" +
-                       "<td>" + dr["Sale_Order_No"] + "</td>" +
-                        "<td> " + dr["Quantity"] + " </td>" +
-                        "<td> " + dr["Rate"] + " </td>" +
-                        "<td> " + dr["Invoice_Price"] + " </td>" +
-                        "<td> " + dr["Discount_Amount"] + " </td>" +
-                        "<td> " + dr["Fuel_Price"] + " </td>" +
-                        "<td> " + dr["Total_Cost"] + " </td>";
+                        "<td> " +Convert.ToDateTime(dr["From_Date"]).ToString("dd-MM-yyyy")+ " </td>" +
+                        "<td> " +Convert.ToDateTime(dr["To_Date"]).ToString("dd-MM-yyyy")+ " </td>" +
+                        "<td> " + NoofSales + " </td>" +
+                        "<td> " + dr["Invoice_Amount"] + " </td>";
 
 
                 output +=  "<td> "+
@@ -159,16 +173,7 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
                 output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Edit(this.id,0)'><i class='fa fa-edit'></i>Edit</a></li>" +
                   "<li class='dropdown-divider'></li>";
 
-                //if(EditAccess.Equals("True"))
-                //{
-                //    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Getdata(this.id,0)'><i class='fa fa-edit'></i>Edit</a></li>" +
-                //"<li class='dropdown-divider'></li>";
-                //}
-                //if(ApproveAccess.Equals("True"))
-                //{
-                //    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AprovePopup' onclick='GetEstimatedAmnt(this.id)'><i class='fa fa-edit'></i>Approve</a></li>" +
-                //      "<li class='dropdown-divider'></li>";
-                //}
+
 
 
                 output+="</div> </td></tr>";
@@ -192,17 +197,26 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
         }
         Context.Response.Write(output+"|"+str_Pagging);
     }
-    void Save_Invoice(string InsertArray)
+    void Save_Invoice(string MainArray,string TableData)
     {
         int Ret=-9;
 
-        string[] Data = InsertArray.Split('|');
-        string Sale_Order_No = GetSONumber(Data[0], Data[12]);
-        string sql = "Insert into tbl_Invoice values('" + Data[0] + "','" + Sale_Order_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
+        string[] MainData = MainArray.Split('|');
+        string[] Sales_Ids=TableData.Split('|');
+        string Invoice_No = GetInvoiceNumber(MainData[0]);
+        string  sql = "insert into Tbl_Invoice values " +
+          "('" + Invoice_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + MainData[0] + "','" + MainData[3] + "','" + MainData[1] + "','" + MainData[2] + "',0);select @@IDENTITY;";
+
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
-        {
-             DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[9] + " where Id=" + Data[0]);
+        {  sql="";
+            for (int i = 0; i < Sales_Ids.Length; i++)
+            {   if (Sales_Ids[i].Trim() != "0")
+                {
+                    sql += "Insert into Tbl_Invoice_Items values (" + Ret + "," + Sales_Ids[i] + ");";
+                }
+            }
+            Ret = DB.Get_ScalerInt(sql);
             Context.Response.Write("Success");
         }
         else
@@ -233,12 +247,12 @@ public class H_tbl_Invoice : IHttpHandler, IRequiresSessionState
         }
 
     }
-    string GetSONumber(string customer_id,string Max_Num)
-    {
-        string SONUM = "";
+    string GetInvoiceNumber(string customer_id)
+    {   string Max_Num =DB.Get_Scaler("if exists (select id from tbl_Invoice) select Max(Id)+1 from tbl_Invoice else select 1");
+        string InvoiceNUM = "";
         string CustomerBusName = DB.Get_Scaler("select Business_Id from tbl_Customer_Supplier where Id=" + customer_id);
-        SONUM = CustomerBusName + "-" + DateTime.Now.Year.ToString() + "-" + Max_Num;
-        return SONUM;
+        InvoiceNUM = "Inv-"+CustomerBusName + "-" + DateTime.Now.Year.ToString() + "-" + Max_Num;
+        return InvoiceNUM;
     }
 
     public bool IsReusable { get { return false; } }

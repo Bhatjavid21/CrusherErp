@@ -1,26 +1,14 @@
 
 
 function ResetFields() {
-    SetInnerVal("PopUpTitle", "Add Invoice")
-    $('#InvoiceNo').html("");
-    $('#ddlcustomer').attr("disabled", false)
+    $("#tbl_Sales_Body").empty();
     $('#ddlcustomer').val(0);
-    $('#ddlproduct').attr("disabled", false)
-    $('#ddlproduct').val(0);
-    $('#txtQty').val("200");
-    $('#txtRate').val("0.00") +
-    $('#txtTrips').val("1");
-    $('#txtSite').val("");
-    $('#txtInvoicePrice').val("0.00");
-    $('#txtFuelPrice').val("0.00");
-    $('#txtDiscount').val("0.00") +
-    $('#txtTotalCost').val("0.00");
-    $('#txtvehicle').val("");
-    $('#btnSave').html("Save")
-    $('#txtRemarks').val("");
+    $('#Frmdt').val("");
+    $('#Todt').val("")
+    $('#txtInvoiceAmount').val("0.00");
     $(".select2").select2();
 }
-function bindddls(IsEdit, Customer_Id,Product_Id) {
+function bindddls(IsEdit, Customer_Id) {
     $.ajax({
         url: 'Invoice.ashx',
         type: "POST",
@@ -29,9 +17,8 @@ function bindddls(IsEdit, Customer_Id,Product_Id) {
 
             if (Chk_Res(data.errorMessage) == false) {
                 if (data != "") {
-                    var CustomerData = JSON.parse(data.split("|")[0]);
-                    var Proddata = JSON.parse(data.split("|")[1]);
-                    $('#InvoiceMaxNum').val(data.split("|")[2])
+                    var CustomerData = JSON.parse(data);
+                  
                     
                     //================Bind Customer===============
                     $('#ddlcustomer').empty();
@@ -40,21 +27,69 @@ function bindddls(IsEdit, Customer_Id,Product_Id) {
                         $('#ddlcustomer').append($('<option>').text(obj.Name.split(',').join(' ')).attr('value', obj.Id));
                     });
 
-                    $('#ddlproduct').empty();
-                    $('#ddlproduct').append($('<option>').text('Select').attr('value', 0));
-                    $.each(Proddata, function (i, obj) {
-                        $('#ddlproduct').append($('<option>').text(obj.Product_Name.split(',').join(' ')).attr('value', obj.Id));
-                    });
+                   
 
                     if (IsEdit == true) {
                         $('#ddlcustomer').val(Customer_Id)
-                        $('#ddlproduct').val(Product_Id)
+                        
                     }
                     else {
                         $('#ddlcustomer').val(0)
-                        $('#ddlproduct').val(0)
+                        
                     }
                     $(".select2").select2();
+                }
+            }
+        }
+    });
+}
+function Getitems()
+{
+    if (setBorderColor_Validation("ddlcustomer,Frmdt,Todt")) {
+        Cus_Id = $('#ddlcustomer').val();
+        GetSalesItems(false, Cus_Id)
+    } else {
+       // calltoast("Please Select Customer", "error");
+    }
+}
+
+function GetSalesItems(IsEdit, Customer_Id) {
+    $('#tbl_Sales_Body').empty();
+    var Frmdate = $('#Frmdt').val();
+    var Todate = $('#Todt').val();
+    $.ajax({
+        url: 'Invoice.ashx',
+        type: "POST",
+        data: { 'fun': 'GetSalesItems', 'Cus_Id': Customer_Id, 'Frmdate': Frmdate, 'Todate': Todate },
+        success: function (data) {
+
+            if (Chk_Res(data.errorMessage) == false) {
+                if (data != "") {
+                    var SalesData = JSON.parse(data);
+
+                    var GrandTotal = 0.00;
+                    //================Bind Customer===============
+                    //  $('#ddlcustomer').empty();
+                    var i = 0;
+                    $.each(SalesData, function (i, obj) {
+                        GrandTotal += parseFloat(obj.total_cost);
+                        $('#tbl_Sales_Body').append($("<tr>"
+                            + " <td style='display:none' id='Sales_"+i+"'>" + obj.id + "</td>"
+                            + " <td >" + SetDateFormat(obj.Sale_Date) + "</td>"
+                            + " <td >" + obj.Sale_order_no + "</td>"
+                            + " <td >" + obj.product_name + "</td>"
+                            + " <td >" + obj.quantity + "</td>"
+                            + " <td >" + obj.trips + "</td>"
+                            + " <td >" + obj.fuel_price + "</td>"
+                            + " <td >" + obj.total_cost + "</td>"
+                            + " </tr > "));
+                        i++;
+                    });
+                    
+                    $('#txtInvoiceAmount').val(GrandTotal)
+                }
+                else {
+                    $('#tbl_Sales_Body').append($("<tr><td colspan='7'>No Record Found</td></tr>"));
                 }
             }
         }
@@ -80,30 +115,22 @@ function GetRate() {
     });
 }
 
-function CalculateInvoicePrice()
-{
-   var rate= $('#txtRate').val()
-   var qty= $('#txtQty').val()
-   var trips= $('#txtTrips').val();
-   var fuel= $('#txtFuelPrice').val();
-   var discount = $('#txtDiscount').val() 
 
-    var InvoicePrice = (parseFloat(rate) * Number(qty)) * Number(trips);
-
-    var TotalCost = parseFloat(InvoicePrice) - parseFloat(discount) - parseFloat(fuel);
-    $('#txtInvoicePrice').val(InvoicePrice);
-    $('#txtTotalCost').val(TotalCost);
-
-}
 function Save_Invoice() {
 
-    var InsertArray = $('#ddlcustomer').val() + "|" + $('#ddlproduct').val() + "|" +
-        $('#txtQty').val() + "|" + $('#txtRate').val() + "|" + $('#txtTrips').val() + "|" + $('#txtSite').val()
-        + "|" + $('#txtInvoicePrice').val() + "|" + $('#txtFuelPrice').val() + "|" + $('#txtDiscount').val()
-        + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() +"|" + $('#InvoiceMaxNum').val()
-        
-    var Controls = "ddlcustomer,ddlproduct,txtQty,txtRate,txtTrips,txtSite,txtInvoicePrice,txtTotalCost,txtvehicle";
+    var MainArray = $('#ddlcustomer').val() + "|" + $('#Frmdt').val() + "|" +
+        $('#Todt').val() + "|" + $('#txtInvoiceAmount').val();        
+    var Controls = "ddlcustomer,Frmdt,Todt,txtInvoiceAmount";
+    var i = 0;
+    //alert(Invoice_Id);
+    TableData = "";
+ 
 
+    $("#tbl_Sales_Body tr").each(function () {
+        //alert($('#Sales_' + i).html())
+        TableData = $('#Sales_' + i).html() + '|' +
+        i++;
+    });
     if (setBorderColor_Validation(Controls)) {
         var caption = $('#btnSave').html();
         if (caption == "Save") {
@@ -111,7 +138,7 @@ function Save_Invoice() {
                 url: 'Invoice.ashx',
                 type: "POST",
                 data: {
-                    'fun': 'Save_Invoice', 'InsertArray': InsertArray
+                    'fun': 'Save_Invoice', 'MainArray': MainArray, 'TableData': TableData
                 },
                 success: function (data) {
 
@@ -121,6 +148,7 @@ function Save_Invoice() {
 
                             $('#Popup').modal('toggle');
                             calltoast("Data Saved Sucessfully", "success");
+                            ResetFields();
                             ListAllInvoice();
                         }
                         else {
@@ -265,5 +293,29 @@ function pageNo(pno) {
     ListAllInvoice();
 }
 
+function SetTodaysDate(obj) {
+    var date = new Date();
+    Date.prototype.setDate = function () {
+        var yyyy = this.getFullYear().toString();
+        var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
+        var dd = this.getDate().toString();
+        return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+    };
+    $(obj).val(date.setDate());
+}
+function DateFormat(datestring) {
+    var date = new Date(datestring);
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
+    var dd = date.getDate().toString();
+    return (dd[1] ? dd : "0" + dd[0]) + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + yyyy; // padding
+}
 
+function SetDateFormat(datestring) {
+    var date = new Date(datestring);
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
+    var dd = date.getDate().toString();
+    return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+}
 

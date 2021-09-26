@@ -40,6 +40,7 @@
 </head>
 
 <body class="hold-transition skin-info-light fixed sidebar-mini">
+     <form id="frm" runat="server">
     <div class="wrapper">
 
         <uc1:uch ID="uch1" runat="server" />
@@ -177,7 +178,10 @@
         </div>
     </div>
         </div>
-   
+         </form>
+   </body>
+</html>
+
     <script src="<%=G.S%>General/jquery.min.js"></script>
     <script src="<%=G.B%>assets/vendor_components/jquery-3.3.1/jquery-3.3.1.js"></script>
     <script src="<%=G.B%>assets/vendor_components/popper/dist/popper.min.js"></script>
@@ -207,5 +211,4 @@
        
 
     </script>
-</body>
-</html>
+         

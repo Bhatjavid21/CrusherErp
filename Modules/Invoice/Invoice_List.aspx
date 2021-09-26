@@ -24,7 +24,8 @@
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="<%=G.B%>assets/vendor_components/datatable/datatables.min.css" />
     <link rel="stylesheet" href="<%=G.B%>assets/css/bootstrap-extend.css">
-
+    <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/select2/dist/css/select2.min.css">
     <link rel="stylesheet" href="<%=G.B%>assets/vendor_components/icheck/skins/all.css">
     <link href="<%=G.B%>assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.css"
@@ -33,14 +34,15 @@
     <link rel="stylesheet" href="<%=G.B%>assets/css/skins/_all-skins.css">
      <style>
         .modal-dialog {
-    width: 900px ;
-   max-width:1100px;
+    width: 90% ;
+   max-width:90%;
 }
     </style>
 </head>
 
 <body class="hold-transition skin-info-light fixed sidebar-mini">
-    <div class="wrapper">
+ <form id="frm" runat="server">
+     <div class="wrapper">
 
         <uc1:uch ID="uch1" runat="server" />
         <uc2:ucs ID="ucs1" runat="server" />
@@ -131,16 +133,21 @@
                     <div class="row mb-10">
                         <div class="col-md-3">
                             <label>Customer<span class="text-danger">*</span></label>
-                            <select id="ddlcustomer" class="form-control enq-dropdown select2">
+                            <select id="ddlcustomer" onchange="Getitems()" class="form-control enq-dropdown select2">
                                 <option value="0"> Select</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                             <label>Product<span class="text-danger">*</span></label>
-                            <select id="ddlproduct" class="form-control enq-dropdown select2" onchange="GetRate()">
-                                <option value="0"> Select</option>
-                            </select>
+                        <div class="col-md-2">
+                             <label>From Date<span class="text-danger">*</span></label>
+                            <input type="date" class="form-control " onchange="Getitems()" id="Frmdt"  />
+                            
+
                         </div>
+                        <div class="col-md-2">
+                             <label>To Date<span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="Todt" onchange="Getitems()"  />
+                         </div>
+                       
                         <div class="col-md-3">
                             <label>Invoice Amount (ft)</label>
                             <input class="form-control " value="0.00" ReadOnly id="txtInvoiceAmount" onkeyup="CalculateInvoicePrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
@@ -152,7 +159,7 @@
                  
                      
                    
-                        <div class="col-md-3 mt-15">
+                        <div class="col-md-2 mt-15">
                             <button class="btn btn-success right" id="btnSave" onclick="Save_Invoice()">Save</button>
                          </div>
                     </div> 
@@ -165,9 +172,12 @@
                                     <thead>
                                         <tr>
                                             
-                                            <th>Sales Order No  </th>
+                                            
                                             <th>Sales Date </th>
-                                             <th>Discount</th>
+                                            <th>Sales Order No  </th>
+                                            <th>Material  </th>
+                                            <th>Quantity (ft)  </th>
+                                             <th>Trips</th>
                                             <th>Fuel Amount </th>
                                             <th>Total Amount</th>
                                                                   
@@ -182,13 +192,18 @@
         </div>
     </div>
         </div>
-   
+ </div>
+ </form>
+   </body>
+</html>
     <script src="<%=G.S%>General/jquery.min.js"></script>
     <script src="<%=G.B%>assets/vendor_components/jquery-3.3.1/jquery-3.3.1.js"></script>
     <script src="<%=G.B%>assets/vendor_components/popper/dist/popper.min.js"></script>
     <script src="<%=G.B%>assets/vendor_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
+    <script src="<%=G.B%>assets/vendor_components/moment/min/moment.min.js"></script>
     <script src="<%=G.B%>assets/vendor_components/select2/dist/js/select2.full.js"></script>
+    <script src="<%=G.B%>assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js"></script>
     <script src="<%=G.B%>assets/vendor_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 
     <script src="<%=G.B%>assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
@@ -203,7 +218,8 @@
 
         $(document).ready(function () {
           //  GetUserAccess();
-            bindddls(false, 0, 0);
+            $('.dtleave').daterangepicker();
+            bindddls(false,0);
             ListAllInvoice();
         });
 
@@ -213,5 +229,4 @@
        
 
     </script>
-</body>
-</html>
+
