@@ -3,14 +3,15 @@ function ResetFields() {
     $('#txtBusinessId').val("");
     $('#txtPhoneNo').val("");
     $('#txtAddress').val("") +
-   $('#txtRemarks').val("");
+        $('#txtRemarks').val("");
+    $('#txtOpeningBalance').val("");
 }
 
 function Save_Customer() {
 
-    var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtAddress').val() +
+    var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtOpeningBalance').val() + "|" + $('#txtAddress').val() +
         "|" + $('#txtRemarks').val();
-    var Controls = "txtCusName,DdlSourseName,txtBusinessId,txtPhoneNo,txtAddress";
+    var Controls = "txtCusName,DdlSourseName,txtBusinessId,txtPhoneNo,txtAddress,txtOpeningBalance";
 
     if (setBorderColor_Validation(Controls)) {
         var caption = $('#btnSave').html();
@@ -34,7 +35,7 @@ function Save_Customer() {
                         else {
                             calltoast("Something went wrong", "error");
                         }
-                        
+
                     }
                 }
             });
@@ -52,7 +53,7 @@ function Save_Customer() {
                     if (Chk_Res(data.errorMessage) == false) {
 
                         if (data != "") {
-                           
+
                             $('#Popup').modal('toggle');
                             calltoast("Updated Saved Sucessfully", "success");
                         }
@@ -68,8 +69,8 @@ function Save_Customer() {
 
 function ListAllCustomer() {
 
-   // var SourceType = $('#DdlListDiv').val()
-   // var Status = $('#DdlListStatus').val()
+    // var SourceType = $('#DdlListDiv').val()
+    // var Status = $('#DdlListStatus').val()
     var SearchString = $('#txtSearch').val()
     var Page_No = $('#hdn_PageNo').val()
 
@@ -77,7 +78,8 @@ function ListAllCustomer() {
         url: 'Customer.ashx',
         type: "POST",
         data: {
-            'fun': 'ListAllCustomer', 'SearchString': SearchString,'Page_No': Page_No },
+            'fun': 'ListAllCustomer', 'SearchString': SearchString, 'Page_No': Page_No
+        },
         success: function (data) {
 
             if (Chk_Res(data.errorMessage) == false) {

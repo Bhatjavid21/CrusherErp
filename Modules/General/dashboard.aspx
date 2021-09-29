@@ -362,7 +362,7 @@
     <script src="<%=G.B%>assets/js/template.js"></script>
     <script src="<%=G.B%>assets/js/demo.js"></script>
     <script src="libo.js"></script>
-    <script src="dashboard.js"></script>
+   <%-- <script src="dashboard.js"></script>--%>
     <script>
         $('.select2').select2();
     </script>

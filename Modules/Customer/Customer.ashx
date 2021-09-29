@@ -88,6 +88,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                        "<td>" + dr["Business_Id"] + "</td>" +
                        "<td>" + dr["Address"] + "</td>" +
                         "<td> " + dr["Phone_no"] + " </td>" +
+                         "<td>" + dr["OpeningBalance"] + "</td>" +
                        "<td>" + dr["Balance"] + "</td>";
 
 
@@ -149,8 +150,9 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
     {
         int Ret = -9;
         string[] Data = InsertArray.Split('|');
-
-        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[3] + "',0.00,'" + Data[4] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,0,'" + Data[2] + "')";
+        decimal openingBal = Convert.ToDecimal(Data[3]);
+        decimal totalBal = openingBal + 0;
+        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[4] + "','" + openingBal + "','" + totalBal + "','" + Data[5] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,0,'" + Data[2] + "')";
         Ret = DB.Get_ScalerInt(sql);
         if (Ret > -1)
         {
