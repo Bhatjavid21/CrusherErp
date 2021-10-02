@@ -85,8 +85,8 @@
                                                 <th>Supplier Name</th>
                                                 <th>Business Id</th>
                                                 <th>Address</th>
-
                                                 <th>Phone No.</th>
+                                                <th>Rate/Trip</th>
                                                 <th>Balance</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -135,7 +135,7 @@
                             </div>
                         </div>
                         <div class="row mb-10">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <label>Supplier Name<span class="text-danger">*</span></label>
                                 <input class="form-control " id="txtCusName" />
                             </div>
@@ -143,7 +143,7 @@
                                 <label>Business Id<span class="text-danger">*</span></label>
                                 <input class="form-control " id="txtBusinessId" />
                             </div>
-                            <div class="col-md-3 ">
+                            <div class="col-md-4">
                                 <label>Phone No/Mobile No<span class="text-danger">*</span></label>
                                 <input class="form-control " id="txtPhoneNo" onkeydown=' return isNumeric(window.event.keyCode,this);' />
 
@@ -151,13 +151,16 @@
 
                         </div>
                         <div class="row mb-10">
-
-                            <div class="col-md-6 ">
+                            <div class="col-md-4 ">
+                                <label>Rate/Trip<span class="text-danger">*</span></label>
+                                <input class="form-control " id="txtTripRate" onkeydown=' return isNumeric(window.event.keyCode,this);'/>
+                            </div>
+                            <div class="col-md-4 ">
                                 <label>Address<span class="text-danger">*</span></label>
                                 <textarea class="form-control " id="txtAddress"></textarea>
 
                             </div>
-                            <div class="col-md-6 ">
+                            <div class="col-md-4 ">
                                 <label>Remarks</label>
                                 <textarea class="form-control " id="txtRemarks"></textarea>
 

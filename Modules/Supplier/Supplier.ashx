@@ -10,6 +10,7 @@ using System.Web.SessionState;
 using Newtonsoft.Json;
 using System.Configuration;
 using ClosedXML.Excel;
+using System.Text;
 
 public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
 {
@@ -28,14 +29,13 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                 {
 
                     case "Save_Supplier":
-
                         Save_Supplier(context.Request.Form["InsertArray"]);
-
                         break;
                     case "ListAllSupplier":
-
-                        ListAllSupplier(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]));
-
+                        ListAllSupplier(context.Request.Form["SearchString"], Convert.ToInt32(context.Request.Form["Page_No"]));
+                        break;
+                    case "Update_Supplier":
+                        Update_Supplier(context.Request.Form["InsertArray"], context.Request.Form["CustomerId"]);
                         break;
                 }
                 //  }
@@ -46,15 +46,15 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
         Context.Response.Cache.SetCacheability(HttpCacheability.NoCache);
     }
     //*********************************View*********************************View******************************************View***********************************************************
-    void ListAllSupplier(string SearchString,int Page_No)
+    void ListAllSupplier(string SearchString, int Page_No)
     {
         string EditAccess = "True";
         string ApproveAccess = "True";
-        string output="";
+        string output = "";
         int TotalRecords = 0, from = 1, to = 20; if (Page_No == 0) { Page_No = 1; };
         // StringBuilder output = new StringBuilder();
         from = (((Page_No * 20) - 20) + 1); to = Page_No * 20;
-        string SourceTypeFilter="";
+        string SourceTypeFilter = "";
         //if(!SourceType.Equals("Select"))
         //{
         //    SourceTypeFilter=" and a.Source_Type='"+SourceType+"' ";
@@ -65,22 +65,22 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
         //{
         //    StatusFilter=" and a.Approval_Status="+status;
         //}
-        string SearchFilter="";
-        if(!SearchString.Equals(""))
+        string SearchFilter = "";
+        if (!SearchString.Equals(""))
         {
-            SearchFilter="and  ( a.Name like '%"+SearchString+"%' or  a.Business_Id like '%"+SearchString+"%' )";
+            SearchFilter = "and  ( a.Name like '%" + SearchString + "%' or  a.Business_Id like '%" + SearchString + "%' )";
         }
 
-        string  sql = "with NewTable as (select a.*,ROW_NUMBER() over (order by Id desc) as RowNum from tbl_Customer_Supplier a " +
-               "  where IsSupplier=1 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
+        string sql = "with NewTable as (select a.*,ROW_NUMBER() over (order by Id desc) as RowNum from tbl_Customer_Supplier a " +
+               "  where IsSupplier=1 " + SearchFilter + ") select * from NewTable where RowNum between " + from + " And " + to;
 
-        DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Customer_Supplier a where IsSupplier=1  "+SearchFilter);
+        DataTable dt = DB.GetDataTable(sql);
+        TotalRecords = DB.Get_ScalerInt("select count(a.Id) from tbl_Customer_Supplier a where IsSupplier=1  " + SearchFilter);
 
-        if(dt.Rows.Count>0)
+        if (dt.Rows.Count > 0)
         {
-            foreach(DataRow dr in dt.Rows)
-            { 
+            foreach (DataRow dr in dt.Rows)
+            {
 
                 output += "<tr>" +
                        "<td>" + dr["Name"] + "</td>" +
@@ -90,7 +90,7 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                        "<td>" + dr["Balance"] + "</td>";
 
 
-                if(dr["IsActive"].ToString().Equals("True"))
+                if (dr["IsActive"].ToString().Equals("True"))
                 {
                     output += "<td><span class='badge badge-success1'>Active</span></td>";
                 }
@@ -98,7 +98,7 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                 {
                     output += "<td><span class='badge badge-danger'>Inactive</span></td>";
                 }
-                output +=  "<td> "+
+                output += "<td> " +
                   "<div class='btn-group'>" +
                                             "<button data-toggle='dropdown' class='btn btn-outline btn-default dropdown-toggle' aria-expanded='true'>" +
                                                 "<span><i class='ti-settings'></i></span>" +
@@ -108,24 +108,24 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                    "<li class='dropdown-divider'></li>";
 
 
-                if(EditAccess.Equals("True"))
+                if (EditAccess.Equals("True"))
                 {
-                    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Getdata(this.id,0)'><i class='fa fa-edit'></i>Edit</a></li>" +
+                    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Edit(this.id)'><i class='fa fa-edit'></i>Edit</a></li>" +
                 "<li class='dropdown-divider'></li>";
                 }
-                if(ApproveAccess.Equals("True"))
+                if (ApproveAccess.Equals("True"))
                 {
                     output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AprovePopup' onclick='GetEstimatedAmnt(this.id)'><i class='fa fa-edit'></i>Approve</a></li>" +
                       "<li class='dropdown-divider'></li>";
                 }
 
 
-                output+="</div> </td></tr>";
+                output += "</div> </td></tr>";
             }
         }
         else
         {
-            output+="<tr><td colspan='8'> No Records Found  </td></tr>";
+            output += "<tr><td colspan='8'> No Records Found  </td></tr>";
         }
         string str_Pagging = "", Paging_Strip = Pagination.PG(TotalRecords, Page_No, 20);
 
@@ -139,16 +139,16 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
 
                   + "</ul></div></div>";
         }
-        Context.Response.Write(output+"|"+str_Pagging);
+        Context.Response.Write(output + "|" + str_Pagging);
     }
     void Save_Supplier(string InsertArray)
     {
-        int Ret=-9;
+        int Ret = -9;
         string[] Data = InsertArray.Split('|');
 
-        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[3] + "',0.00,'" + Data[4] + "','" + DateTime.Now.ToString("yyyy-MM-dd")+ "',null,1,1,'" + Data[2] + "')";
+        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[3] + "',0.00,'" + Data[4] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,1,'" + Data[2] + "','" + Data[5] + "')";
         Ret = DB.Get_ScalerInt(sql);
-        if(Ret>-1)
+        if (Ret > -1)
         {
             Context.Response.Write("Success");
         }
@@ -158,6 +158,38 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
         }
 
     }
+    void Edit(string CustomerId)
+    {
+        string jasonString1 = "";
+        DataTable Dt = DB.GetDataTable("select * from tbl_Customer_Supplier where Id=" + CustomerId);
+        if (Dt.Rows.Count > 0)
+        {
+            jasonString1 = JsonConvert.SerializeObject(Dt);
+        }
 
+        Context.Response.Write(jasonString1);
+    }
+    void Update_Supplier(string InsertArray, string CustomerId)
+    {
+        StringBuilder sql = new StringBuilder();
+        int Ret = -9;
+        string[] Data = InsertArray.Split('|');
+        decimal openingBal = Convert.ToDecimal(Data[3]);
+
+        sql.Append("update tbl_Customer_Supplier set Business_Id='" + Data[1] + "',Name='" + Data[0] + "',Address='" + Data[4] + "',OpeningBalance='" + openingBal + "',");
+        if (openingBal < 1)
+            sql.Append("Balance=Balance+" + openingBal + ",");
+        sql.Append("Remarks = '" + Data[5] + "', Updated_Date = '" + DateTime.Now.ToString("yyyy-MM-dd") + "', IsActive = 1, IsSupplier = 0, Phone_No = '" + Data[2] + "' where id='" + CustomerId + "'");
+        Ret = DB.Get_ScalerInt(sql + "");
+        if (Ret > -1)
+        {
+            Context.Response.Write("Success");
+        }
+        else
+        {
+            Context.Response.Write("Something Went Wrong");
+        }
+
+    }
     public bool IsReusable { get { return false; } }
 }

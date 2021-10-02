@@ -4,7 +4,39 @@ function ResetFields() {
     $('#txtPhoneNo').val("");
     $('#txtAddress').val("") +
         $('#txtRemarks').val("");
+    $('#txtOpeningBalance').attr('disabled', false);
     $('#txtOpeningBalance').val("");
+}
+
+function Edit(CustomerId) {
+
+    $.ajax({
+        url: 'Customer.ashx',
+        type: "POST",
+        data: { 'fun': 'Edit', 'CustomerId': CustomerId },
+        success: function (data) {
+
+            if (Chk_Res(data.errorMessage) == false) {
+                if (data != "") {
+                    var CustomerData = JSON.parse(data)
+                    $.each(CustomerData, function (i, obj) {
+                        $('#hdnCustomerId').val(obj.Id);
+                        $("#txtCusName").val(obj.Name);
+                        $("#txtBusinessId").val(obj.Business_Id);
+                        $('#txtPhoneNo').val(obj.Phone_no);
+                        $('#txtAddress').val(obj.Address);
+                        $('#txtRemarks').val(obj.Remarks);
+                        $('#txtOpeningBalance').val(obj.OpeningBalance);
+
+                        if ($('#txtOpeningBalance').val() > 1) {
+                            $('#txtOpeningBalance').attr('disabled', true);
+                        }
+                        $('#btnSave').html("Update")
+                    });
+                }
+            }
+        }
+    });
 }
 
 function Save_Customer() {
@@ -23,9 +55,7 @@ function Save_Customer() {
                     'fun': 'Save_Customer', 'InsertArray': InsertArray
                 },
                 success: function (data) {
-
                     if (Chk_Res(data.errorMessage) == false) {
-
                         if (data != "") {
 
                             $('#Popup').modal('toggle');
@@ -35,10 +65,10 @@ function Save_Customer() {
                         else {
                             calltoast("Something went wrong", "error");
                         }
-
                     }
                 }
             });
+            ListAllCustomer();
         }
         else if (caption == "Update") {
 
@@ -46,7 +76,7 @@ function Save_Customer() {
                 url: 'Customer.ashx',
                 type: "POST",
                 data: {
-                    'fun': 'Update_Budget', 'InsertArray': InsertArray, 'Budget_Id': $('#hdn_Budget_Id').val()
+                    'fun': 'Update_Customer', 'InsertArray': InsertArray, 'CustomerId': $('#hdnCustomerId').val()
                 },
                 success: function (data) {
 
@@ -60,6 +90,7 @@ function Save_Customer() {
                     }
                 }
             });
+            ListAllCustomer();
         }
     }
     else {

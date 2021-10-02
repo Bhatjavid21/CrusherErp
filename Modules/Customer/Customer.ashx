@@ -10,6 +10,7 @@ using System.Web.SessionState;
 using Newtonsoft.Json;
 using System.Configuration;
 using ClosedXML.Excel;
+using System.Text;
 
 public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
 {
@@ -29,14 +30,16 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
                 {
 
                     case "Save_Customer":
-
                         Save_Customer(context.Request.Form["InsertArray"]);
-
+                        break;
+                    case "Edit":
+                        Edit(context.Request.Form["CustomerId"]);
                         break;
                     case "ListAllCustomer":
-
                         ListAllCustomer(context.Request.Form["SearchString"], Convert.ToInt32(context.Request.Form["Page_No"]));
-
+                        break;
+                    case "Update_Customer":
+                        Update_Customer(context.Request.Form["InsertArray"], context.Request.Form["CustomerId"]);
                         break;
                 }
                 //  }
@@ -112,7 +115,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
 
                 if (EditAccess.Equals("True"))
                 {
-                    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Getdata(this.id,0)'><i class='fa fa-edit'></i>Edit</a></li>" +
+                    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Edit(this.id)'><i class='fa fa-edit'></i>Edit</a></li>" +
                 "<li class='dropdown-divider'></li>";
                 }
                 if (ApproveAccess.Equals("True"))
@@ -164,6 +167,38 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
         }
 
     }
+    void Edit(string CustomerId)
+    {
+        string jasonString1 = "";
+        DataTable Dt = DB.GetDataTable("select * from tbl_Customer_Supplier where Id=" + CustomerId);
+        if (Dt.Rows.Count > 0)
+        {
+            jasonString1 = JsonConvert.SerializeObject(Dt);
+        }
 
+        Context.Response.Write(jasonString1);
+    }
+    void Update_Customer(string InsertArray, string CustomerId)
+    {
+        StringBuilder sql = new StringBuilder();
+        int Ret = -9;
+        string[] Data = InsertArray.Split('|');
+        decimal openingBal = Convert.ToDecimal(Data[3]);
+
+        sql.Append("update tbl_Customer_Supplier set Business_Id='" + Data[1] + "',Name='" + Data[0] + "',Address='" + Data[4] + "',OpeningBalance='" + openingBal + "',");
+        if (openingBal < 1)
+            sql.Append("Balance=Balance+" + openingBal + ",");
+        sql.Append("Remarks = '" + Data[5] + "', Updated_Date = '" + DateTime.Now.ToString("yyyy-MM-dd") + "', IsActive = 1, IsSupplier = 0, Phone_No = '" + Data[2] + "' where id='" + CustomerId + "'");
+        Ret = DB.Get_ScalerInt(sql + "");
+        if (Ret > -1)
+        {
+            Context.Response.Write("Success");
+        }
+        else
+        {
+            Context.Response.Write("Something Went Wrong");
+        }
+
+    }
     public bool IsReusable { get { return false; } }
 }

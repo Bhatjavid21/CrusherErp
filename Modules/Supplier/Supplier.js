@@ -2,15 +2,16 @@ function ResetFields() {
     $('#txtCusName').val("");
     $('#txtBusinessId').val("");
     $('#txtPhoneNo').val("");
-    $('#txtAddress').val("") +
-   $('#txtRemarks').val("");
+    $('#txtAddress').val("");
+    $('#txtTripRate').val("");
+    $('#txtRemarks').val("");
 }
 
 function Save_Supplier() {
 
-    var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtAddress').val() +
-        "|" + $('#txtRemarks').val();
-    var Controls = "txtCusName,DdlSourseName,txtBusinessId,txtPhoneNo,txtAddress";
+    var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtAddress').val() + "|" +
+        "|" + $('#txtRemarks').val() + $('#txtTripRate').val();
+    var Controls = "txtCusName,txtBusinessId,txtPhoneNo,txtAddress,txtTripRate,txtRemarks";
 
     if (setBorderColor_Validation(Controls)) {
         var caption = $('#btnSave').html();
@@ -34,7 +35,7 @@ function Save_Supplier() {
                         else {
                             calltoast("Something went wrong", "error");
                         }
-                        
+
                     }
                 }
             });
@@ -52,7 +53,7 @@ function Save_Supplier() {
                     if (Chk_Res(data.errorMessage) == false) {
 
                         if (data != "") {
-                           
+
                             $('#Popup').modal('toggle');
                             calltoast("Updated Saved Sucessfully", "success");
                         }
@@ -68,8 +69,8 @@ function Save_Supplier() {
 
 function ListAllSupplier() {
 
-   // var SourceType = $('#DdlListDiv').val()
-   // var Status = $('#DdlListStatus').val()
+    // var SourceType = $('#DdlListDiv').val()
+    // var Status = $('#DdlListStatus').val()
     var SearchString = $('#txtSearch').val()
     var Page_No = $('#hdn_PageNo').val()
 
@@ -77,7 +78,8 @@ function ListAllSupplier() {
         url: 'Supplier.ashx',
         type: "POST",
         data: {
-            'fun': 'ListAllSupplier', 'SearchString': SearchString,'Page_No': Page_No },
+            'fun': 'ListAllSupplier', 'SearchString': SearchString, 'Page_No': Page_No
+        },
         success: function (data) {
 
             if (Chk_Res(data.errorMessage) == false) {

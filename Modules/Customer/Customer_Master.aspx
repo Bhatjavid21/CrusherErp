@@ -46,6 +46,7 @@
                 <!-- Main content -->
                 <section class="content mt-20">
                     <input type="hidden" id="hdn_PageNo" value="0" />
+                      <input type="hidden" id="hdnCustomerId" value="0" />
                     <div class="box">
                         <div class="col-lg-12 col-12 text-center" hidden id="divViewAccess">
                             <div class="box">
@@ -136,7 +137,7 @@
                         </div>
                          <div>
                             <label>Opening Balance<span class="text-danger">*</span></label>
-                            <input class="form-control " id="txtOpeningBalance" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            <input class="form-control " id="txtOpeningBalance" value="0" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                         </div>
                         <div>
                             <label>Address<span class="text-danger">*</span></label>
