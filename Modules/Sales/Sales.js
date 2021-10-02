@@ -3,6 +3,7 @@
 function ResetFields() {
     SetInnerVal("PopUpTitle", "Add Sales")
     $('#SalesNo').html("");
+    SetTodaysDate('#txtSalesdate')
     $('#ddlcustomer').attr("disabled", false)
     $('#ddlcustomer').val(0);
     $('#ddlproduct').attr("disabled", false)
@@ -18,6 +19,8 @@ function ResetFields() {
     $('#txtvehicle').val("");
     $('#btnSave').html("Save")
     $('#txtRemarks').val("");
+    $('#ddlcustomer').tabIndex = 0;
+    $('#ddlcustomer').focus();
     $(".select2").select2();
 }
 function bindddls(IsEdit, Customer_Id,Product_Id) {
@@ -34,10 +37,15 @@ function bindddls(IsEdit, Customer_Id,Product_Id) {
                     $('#SalesMaxNum').val(data.split("|")[2])
                     
                     //================Bind Customer===============
+                    
+                    $('#ddlListcustomer').empty();
+                    $('#ddlListcustomer').append($('<option>').text('Select Customer').attr('value', 0));
+
                     $('#ddlcustomer').empty();
                     $('#ddlcustomer').append($('<option>').text('Select Customer').attr('value', 0));
                     $.each(CustomerData, function (i, obj) {
                         $('#ddlcustomer').append($('<option>').text(obj.Name.split(',').join(' ')).attr('value', obj.Id));
+                        $('#ddlListcustomer').append($('<option>').text(obj.Name.split(',').join(' ')).attr('value', obj.Id));
                     });
 
                     $('#ddlproduct').empty();
@@ -96,13 +104,13 @@ function CalculateSalesPrice()
 
 }
 function Save_Sales() {
-
+    
     var InsertArray = $('#ddlcustomer').val() + "|" + $('#ddlproduct').val() + "|" +
         $('#txtQty').val() + "|" + $('#txtRate').val() + "|" + $('#txtTrips').val() + "|" + $('#txtSite').val()
         + "|" + $('#txtSalesPrice').val() + "|" + $('#txtFuelPrice').val() + "|" + $('#txtDiscount').val()
-        + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() +"|" + $('#SalesMaxNum').val()
+        + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() + "|" + $('#SalesMaxNum').val() + "|" + $('#txtSalesdate').val() 
         
-    var Controls = "ddlcustomer,ddlproduct,txtQty,txtRate,txtTrips,txtSite,txtSalesPrice,txtTotalCost,txtvehicle";
+    var Controls = "txtSalesdate,ddlcustomer,ddlproduct,txtQty,txtRate,txtTrips,txtSite,txtSalesPrice,txtTotalCost,txtvehicle";
 
     if (setBorderColor_Validation(Controls)) {
         var caption = $('#btnSave').html();
@@ -177,6 +185,7 @@ function Edit(Sales_Id, Isview) {
              
                         $('#ddlproduct').attr("disabled", true)
                         
+                        $('#txtSalesdate').val(SetDateFormat(obj.Sale_Date))
                         $('#hdn_Sales_Id').val(obj.Id);
                         $('#txtQty').val(obj.Quantity);
                         $('#txtRate').val(obj.Rate) +
@@ -215,8 +224,8 @@ function Edit(Sales_Id, Isview) {
     });
 }
 function ListAllSales() {
-
-   // var SourceType = $('#DdlListDiv').val()
+    
+    var customer = $('#ddlListcustomer').val()
    // var Status = $('#DdlListStatus').val()
     var SearchString = $('#txtSearch').val()
     var Page_No = $('#hdn_PageNo').val()
@@ -225,7 +234,7 @@ function ListAllSales() {
         url: 'Sales.ashx',
         type: "POST",
         data: {
-            'fun': 'ListAllSales', 'SearchString': SearchString,'Page_No': Page_No },
+            'fun': 'ListAllSales', 'SearchString': SearchString, 'Page_No': Page_No, 'customer': customer },
         success: function (data) {
 
             if (Chk_Res(data.errorMessage) == false) {
@@ -240,6 +249,74 @@ function ListAllSales() {
     });
 }
 
+function SetTodaysDate(obj) {
+    var date = new Date();
+    Date.prototype.setDate = function () {
+        var yyyy = this.getFullYear().toString();
+        var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
+        var dd = this.getDate().toString();
+        return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+    };
+    $(obj).val(date.setDate());
+}
+
+function SetDateFormat(datestring) {
+    var date = new Date(datestring);
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
+    var dd = date.getDate().toString();
+    return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+}
+
+function AddVoucher(Sales_id,Vouchers) {
+    $('#hdn_Sales_Id').val(Sales_id);
+    $('#txtVouchers').val(Vouchers);
+    
+}
+
+function SaveVoucher() {
+    $.ajax({
+        url: 'Sales.ashx',
+        type: "POST",
+        data: {
+            'fun': 'SaveVoucher', 'Sales_id': $('#hdn_Sales_Id').val(), 'Vouchers': $('#txtVouchers').val()
+        },
+        success: function (data) {
+
+            if (Chk_Res(data.errorMessage) == false) {
+
+                if (data != "") {
+
+                    $('#Popupvocher').modal('toggle');
+                    calltoast("Vouchers Added Sucessfully", "success");
+                    ListAllSales();
+
+                }
+            }
+        }
+    });
+}
+
+function deletesale(sales_id) {
+    $.ajax({
+        url: 'Sales.ashx',
+        type: "POST",
+        data: {
+            'fun': 'deletesale', 'Sales_id': Sales_id
+        },
+        success: function (data) {
+
+            if (Chk_Res(data.errorMessage) == false) {
+
+                if (data != "") {
+
+                    
+
+                }
+            }
+        }
+    });
+}
 
 function calltoast(msg, msgtype) {
     $.toast({

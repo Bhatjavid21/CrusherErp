@@ -1,0 +1,4 @@
+alter TABLE [dbo].[tbl_Customer_Supplier] add  [OpeningBalance] [decimal](18, 2) NULL
+
+alter TABLE [dbo].tbl_Sales add  Voucher_Numbers nvarchar(max) NULL
+

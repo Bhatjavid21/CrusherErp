@@ -40,7 +40,7 @@
 </head>
 
 <body class="hold-transition skin-info-light fixed sidebar-mini">
-    <form id="frm" runat="server">
+    <form id="frm" runat="server" >
         <div class="wrapper">
 
             <uc1:uch ID="uch1" runat="server" />
@@ -65,13 +65,18 @@
                         <div class="box-body" id="MianDiv">
                             <div class="row mb-10">
 
-                                <div class="col-md-4 mt-25">
+                                <div class="col-md-3 mt-25">
                                     <input type="text" id="txtSearch" class="form-control" onkeyup="Searchtxt()" placeholder="Search">
                                     <span class="tblsearch-btn"><i class="ti-search"></i></span>
 
                                 </div>
-
-                                <div class="col-md-8 mt-25 ">
+                                  <div class="col-md-3">
+                              <label>Customer<span class="text-danger">*</span></label>
+                                <select id="ddlListcustomer" class="form-control enq-dropdown select2" onchange="ListAllSales()">
+                                    <option value="0" tabindex="0">Select</option>
+                                </select>
+                            </div>
+                                <div class="col-md-6 mt-25 ">
                                     <button class="btn btn-success right fa fa-plus" id="btnAdd" onclick="ResetFields();" data-toggle="modal" data-target="#Popup"></button>
 
                                 </div>
@@ -89,8 +94,9 @@
                                                 <th>Qty</th>
                                                 <th>Rate/ft</th>
                                                 <th>Sales Price</th>
-                                                <th>Discount</th>
+                                                <th>Discount</th> 
                                                 <th>Fuel Amount</th>
+                                                <th>Voucher Nos</th>
                                                 <th>Total Cost</th>
                                                 <th>Action</th>
                                             </tr>
@@ -120,107 +126,7 @@
             </div>
             <!-- /.cont<ent-wrapper -->
         </div>
-        <div class="modal fade  bs-example-modal-lg" id="Popup" tabindex="">
-            <div class="modal-dialog ">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="PopUpTitle">Add Sales</h5>
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body pt-5" id="AllContent">
-                        <div class="row mb-10">
-                            <div class='col-md-6'>
-                                <label id="SalesNo"></label>
-
-                            </div>
-                        </div>
-                        <div class="row mb-10">
-                            <div class="col-md-3">
-                                <label>Customer<span class="text-danger">*</span></label>
-                                <select id="ddlcustomer" class="form-control enq-dropdown select2">
-                                    <option value="0">Select</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label>Product<span class="text-danger">*</span></label>
-                                <select id="ddlproduct" class="form-control enq-dropdown select2" onchange="GetRate()">
-                                    <option value="0">Select</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label>Quantity (ft)<span class="text-danger">*</span></label>
-                                <input class="form-control " value="200" id="txtQty" onkeyup="CalculateSalesPrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-                            <div class="col-md-3">
-                                <label>Rate Per ft<span class="text-danger">*</span></label>
-                                <input class="form-control " value="0.00" id="txtRate" onkeyup="CalculateSalesPrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-                        </div>
-                        <div class="row mb-10">
-                            <div class="col-md-3">
-                                <label>No.Of Trips<span class="text-danger">*</span></label>
-                                <input type="number" onchange="CalculateSalesPrice()" class="form-control " onkeyup="CalculateSalesPrice()" value="1" id="txtTrips" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-                            <div class="col-md-6">
-                                <label>Site<span class="text-danger">*</span></label>
-                                <input class="form-control " id="txtSite" />
-
-                            </div>
-
-                            <div class="col-md-3">
-                                <label>Sales Price<span class="text-danger">*</span></label>
-                                <input class="form-control " readonly value="0.00" id="txtSalesPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-
-                        </div>
-                        <div class="row mb-10">
-                            <div class="col-md-3">
-                                <label>Fuel Amount</label>
-                                <input class="form-control " onkeyup="CalculateSalesPrice()" value="0.00" id="txtFuelPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-
-                            <div class="col-md-3">
-                                <label>Discount Amount</label>
-                                <input class="form-control " onkeyup="CalculateSalesPrice()" value="0.00" id="txtDiscount" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-                            <div class="col-md-3">
-                                <label>Total Cost<span class="text-danger">*</span></label>
-                                <input class="form-control " value="0.00" readonly id="txtTotalCost" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-                            <div class="col-md-3">
-                                <label>Vehicle No<span class="text-danger">*</span></label>
-                                <input class="form-control " value="" id="txtvehicle" />
-
-                            </div>
-                            <div class="col-md-6 ">
-                                <label>Remarks </label>
-                                <textarea class="form-control " id="txtRemarks"></textarea>
-
-                            </div>
-
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button class="btn btn-success right" id="btnSave" onclick="Save_Sales()">Save</button>
-                            </div>
-                        </div>
-
-
-
-                        <div class="modal-footer"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
         <script src="<%=G.S%>General/jquery.min.js"></script>
         <script src="<%=G.B%>assets/vendor_components/jquery-3.3.1/jquery-3.3.1.js"></script>
@@ -253,5 +159,148 @@
 
         </script>
     </form>
+    <div class="modal fade  bs-example-modal-lg" id="Popup" tabindex="">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="PopUpTitle">Add Sales</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body pt-5" id="AllContent">
+                        <div class="row mb-10">
+                            <div class='col-md-6'>
+                                <label id="SalesNo"></label>
+
+                            </div>
+                        </div>
+                        <div class="row mb-10">
+
+                            <div class="col-md-3">
+                                <label>Sales Date<span class="text-danger">*</span></label>
+                                <input class="form-control " tabindex="0" type="date" id="txtSalesdate" onkeyup="CalculateSalesPrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+
+                            <div class="col-md-3">
+                                <label>Customer<span class="text-danger">*</span></label>
+                                <select id="ddlcustomer" class="form-control enq-dropdown select2">
+                                    <option value="0" tabindex="0">Select</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Product<span class="text-danger">*</span></label>
+                                <select id="ddlproduct" class="form-control enq-dropdown select2" onchange="GetRate()">
+                                    <option value="0" tabindex="1">Select</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Quantity (ft)<span class="text-danger">*</span></label>
+                                <input class="form-control " tabindex="2" value="200" id="txtQty" onkeyup="CalculateSalesPrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+                           
+                        </div>
+                        <div class="row mb-10">
+                             <div class="col-md-3">
+                                <label>Rate Per ft<span class="text-danger">*</span></label>
+                                <input class="form-control " tabindex="3" value="0.00" id="txtRate" onkeyup="CalculateSalesPrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+                            <div class="col-md-3">
+                                <label>No.Of Trips<span class="text-danger">*</span></label>
+                                <input type="number" tabindex="4" onchange="CalculateSalesPrice()" class="form-control " onkeyup="CalculateSalesPrice()" value="1" id="txtTrips" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+                            <div class="col-md-6">
+                                <label>Site<span class="text-danger">*</span></label>
+                                <input class="form-control " tabindex="5" id="txtSite" />
+
+                            </div>
+
+                            
+
+                        </div>
+                        <div class="row mb-10">
+                            <div class="col-md-3">
+                                <label>Sales Price<span class="text-danger">*</span></label>
+                                <input class="form-control " readonly value="0.00" id="txtSalesPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+                            <div class="col-md-3">
+                                <label>Fuel Amount</label>
+                                <input class="form-control " tabindex="6" onkeyup="CalculateSalesPrice()" value="0.00" id="txtFuelPrice" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+
+                            <div class="col-md-3">
+                                <label>Discount Amount</label>
+                                <input class="form-control " tabindex="7" onkeyup="CalculateSalesPrice()" value="0.00" id="txtDiscount" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+                            <div class="col-md-3">
+                                <label>Total Cost<span class="text-danger">*</span></label>
+                                <input class="form-control " value="0.00" readonly id="txtTotalCost" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
+                            <div class="col-md-3">
+                                <label>Vehicle No<span class="text-danger">*</span></label>
+                                <input class="form-control " tabindex="8" value="" id="txtvehicle" />
+
+                            </div>
+                            <div class="col-md-6 ">
+                                <label>Remarks </label>
+                                <textarea class="form-control " tabindex="9" id="txtRemarks"></textarea>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button class="btn btn-success right" tabindex="10" id="btnSave" onclick="Save_Sales()">Save</button>
+                            </div>
+                        </div>
+
+
+
+                        <div class="modal-footer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+     <div class="modal fade  bs-example-modal-lg" id="Popupvocher" tabindex="">
+            <div class="modal-dialog " style="width: 500px!important">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="PopUpTitlevocher">Add Vouchers</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body pt-5" id="AllContentvocher">
+                        
+                        <div class="row mb-10">
+                            <div class="col-md-12 ">
+                                <label>Vouchers </label>
+                                <textarea class="form-control " placeholder="Eg: voucher1,voucher2,.." id="txtVouchers"></textarea>
+
+                            </div>
+                            </div>
+                       
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button class="btn btn-success right" tabindex="10" id="btnSavevoucher" onclick="SaveVoucher()">Save</button>
+                            </div>
+                        </div>
+
+
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
 </html>

@@ -34,7 +34,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                         break;
                     case "ListAllSales":
 
-                        ListAllSales(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]));
+                        ListAllSales(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]),context.Request.Form["customer"]);
 
                         break;
                     case "bindddls":
@@ -48,6 +48,9 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                         break;
                     case "Update_Sales":
                         Update_Sales(context.Request.Form["InsertArray"], context.Request.Form["Sales_Id"]);
+                        break;
+                    case "SaveVoucher":
+                        SaveVoucher(context.Request.Form["Sales_id"],context.Request.Form["Vouchers"]);
                         break;
                 }
                 //  }
@@ -99,7 +102,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         Context.Response.Write(Rate);
     }
     //*********************************View*********************************View******************************************View***********************************************************
-    void ListAllSales(string SearchString,int Page_No)
+    void ListAllSales(string SearchString,int Page_No,string customer)
     {
         string EditAccess = "True";
         string ApproveAccess = "True";
@@ -107,28 +110,28 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         int TotalRecords = 0, from = 1, to = 20; if (Page_No == 0) { Page_No = 1; };
         // StringBuilder output = new StringBuilder();
         from = (((Page_No * 20) - 20) + 1); to = Page_No * 20;
-        string SourceTypeFilter="";
-        //if(!SourceType.Equals("Select"))
-        //{
-        //    SourceTypeFilter=" and a.Source_Type='"+SourceType+"' ";
-        //}
+        string CustomerFilter="";
+        if (!customer.Equals("0"))
+        {
+            CustomerFilter = " and a.Customer_Id='" + customer + "' ";
+        }
 
         //string StatusFilter="";
         //if(!status.Equals(""))
         //{
         //    StatusFilter=" and a.Approval_Status="+status;
         //}
-        string SearchFilter="";
+        string SearchFilter ="";
         if(!SearchString.Equals(""))
         {
             SearchFilter="and  ( a.Sale_Order_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
         }
 
         string  sql = "With NewTable as( select a.*,b.Id as CusId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id "+
-                      " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
+                      " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 "+SearchFilter+CustomerFilter+") select * from NewTable where RowNum between "+from+" And "+to;
 
         DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter);
+        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter+CustomerFilter);
 
         if(dt.Rows.Count>0)
         {
@@ -145,6 +148,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                         "<td> " + dr["Sales_Price"] + " </td>" +
                         "<td> " + dr["Discount_Amount"] + " </td>" +
                         "<td> " + dr["Fuel_Price"] + " </td>" +
+                         "<td style='word-wrap:break-word'> " + dr["Voucher_Numbers"] + " </td>" +
                         "<td> " + dr["Total_Cost"] + " </td>";
 
 
@@ -158,6 +162,10 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                    "<li class='dropdown-divider'></li>";
                 output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Edit(this.id,0)'><i class='fa fa-edit'></i>Edit</a></li>" +
                   "<li class='dropdown-divider'></li>";
+                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popupvocher' onclick=AddVoucher(this.id,'"+dr["Voucher_Numbers"]+"')><i class='fa fa-doc'></i>Add/View Voucher</a></li>" +
+                 "<li class='dropdown-divider'></li>";
+                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal'  deletesale(this.id)'><i class='fa fa-delete'></i>Delete Sale</a></li>" +
+                 "<li class='dropdown-divider'></li>";
 
                 //if(EditAccess.Equals("True"))
                 //{
@@ -198,11 +206,11 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
 
         string[] Data = InsertArray.Split('|');
         string Sale_Order_No = GetSONumber(Data[0], Data[12]);
-        string sql = "Insert into tbl_Sales values('" + Data[0] + "','" + Sale_Order_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
+        string sql = "Insert into tbl_Sales values('" + Data[0] + "','" + Sale_Order_No + "','"+Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
-             DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[9] + " where Id=" + Data[0]);
+            DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[9] + " where Id=" + Data[0]);
             Context.Response.Write("Success");
         }
         else
@@ -220,7 +228,8 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         string[] Data = InsertArray.Split('|');
         decimal NewTotalCost = decimal.Parse(Data[9]);
         decimal Difrence =NewTotalCost- OldTotalcost  ;
-        string sql = "Update  tbl_Sales Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Sales_Price='"+Data[6]+"',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='"+Data[9]+"',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] +"' where Id="+Sales_Id;
+
+        string sql = "Update  tbl_Sales Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Sales_Price='"+Data[6]+"',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='"+Data[9]+"',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] +"',Sale_Date='"+Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd")+"' where Id="+Sales_Id;
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
@@ -233,12 +242,27 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         }
 
     }
+
     string GetSONumber(string customer_id,string Max_Num)
     {
         string SONUM = "";
         string CustomerBusName = DB.Get_Scaler("select Business_Id from tbl_Customer_Supplier where Id=" + customer_id);
         SONUM = CustomerBusName + "-" + DateTime.Now.Year.ToString() + "-" + Max_Num;
         return SONUM;
+    }
+
+    void SaveVoucher(string sales_id,string Vouchers)
+    {   int Ret = -9;
+        Ret = DB.Get_ScalerInt("Update  tbl_Sales Set Voucher_Numbers='" + Vouchers + "' where Id="+sales_id);
+      if(Ret>-1)
+        {
+            
+            Context.Response.Write("Success");
+        }
+        else
+        {
+            Context.Response.Write("");
+        }
     }
 
     public bool IsReusable { get { return false; } }

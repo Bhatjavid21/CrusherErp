@@ -218,7 +218,7 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         decimal OldTotalcost = decimal.Parse(DB.Get_Scaler("Select Total_Cost from tbl_Purchase where Id=" + Purchase_Id));
         string[] Data = InsertArray.Split('|');
         decimal NewTotalCost = decimal.Parse(Data[6]);
-        decimal Difrence =NewTotalCost- OldTotalcost  ;
+        decimal Difrence =NewTotalCost-OldTotalcost  ;
         string sql = "Update  tbl_Purchase Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Fuel_Price='" + Data[5] + "',Total_Cost='"+Data[6]+"',Vehicle_No='" + Data[7] + "',Remarks='" + Data[8] +"' where Id="+Purchase_Id;
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
