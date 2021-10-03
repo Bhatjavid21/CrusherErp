@@ -34,6 +34,9 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                     case "ListAllSupplier":
                         ListAllSupplier(context.Request.Form["SearchString"], Convert.ToInt32(context.Request.Form["Page_No"]));
                         break;
+                    case "Edit":
+                        Edit(context.Request.Form["CustomerId"]);
+                        break;
                     case "Update_Supplier":
                         Update_Supplier(context.Request.Form["InsertArray"], context.Request.Form["CustomerId"]);
                         break;
@@ -145,8 +148,10 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
     {
         int Ret = -9;
         string[] Data = InsertArray.Split('|');
-
-        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[3] + "',0.00,'" + Data[4] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,1,'" + Data[2] + "','" + Data[5] + "')";
+        decimal openingBal = Convert.ToDecimal(Data[6]);
+        decimal totalBal = openingBal + 0;
+        //string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[3] + "',0.00,'" + Data[4] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,1,'" + Data[2] + "','" + Data[5] + "')";
+        string sql = "Insert into tbl_Customer_Supplier (Name,Business_Id,Phone_No,Address,Remarks,TripRate,OpeningBalance,Balance,IsActive,IsSupplier,Created_Date) values('" + Data[0] + "','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + openingBal + "','" + totalBal + "',1,1,'" + DateTime.Now.ToString("yyyy-MM-dd") + "')";
         Ret = DB.Get_ScalerInt(sql);
         if (Ret > -1)
         {
@@ -179,7 +184,7 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
         sql.Append("update tbl_Customer_Supplier set Business_Id='" + Data[1] + "',Name='" + Data[0] + "',Address='" + Data[4] + "',OpeningBalance='" + openingBal + "',");
         if (openingBal < 1)
             sql.Append("Balance=Balance+" + openingBal + ",");
-        sql.Append("Remarks = '" + Data[5] + "', Updated_Date = '" + DateTime.Now.ToString("yyyy-MM-dd") + "', IsActive = 1, IsSupplier = 0, Phone_No = '" + Data[2] + "' where id='" + CustomerId + "'");
+        sql.Append("Remarks = '" + Data[5] + "', Updated_Date = '" + DateTime.Now.ToString("yyyy-MM-dd") + "', IsActive = 1, IsSupplier = 1, Phone_No = '" + Data[2] + "' where id='" + CustomerId + "'");
         Ret = DB.Get_ScalerInt(sql + "");
         if (Ret > -1)
         {
@@ -189,7 +194,6 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
         {
             Context.Response.Write("Something Went Wrong");
         }
-
     }
     public bool IsReusable { get { return false; } }
 }

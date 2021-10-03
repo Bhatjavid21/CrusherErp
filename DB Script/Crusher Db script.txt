@@ -3,7 +3,7 @@ alter TABLE [dbo].[tbl_Customer_Supplier] add  [OpeningBalance] [decimal](18, 2)
 alter TABLE [dbo].tbl_Sales add  Voucher_Numbers nvarchar(max) NULL
 
 
-alter TABLE [dbo].[tbl_Customer_Supplier] add txtTripRate decimal(18,2)
+alter TABLE [dbo].[tbl_Customer_Supplier] add TripRate decimal(18,2)
 	
 
 

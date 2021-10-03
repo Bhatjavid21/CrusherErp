@@ -4,10 +4,11 @@ function ResetFields() {
     $('#txtPhoneNo').val("");
     $('#txtAddress').val("") +
         $('#txtRemarks').val("");
-    $('#txtOpeningBalance').attr('disabled', false);
     $('#txtOpeningBalance').val("");
 }
-
+$(document).ready(function () {
+    $('#txtOpeningBalance').attr('disabled', false);
+});
 function Edit(CustomerId) {
 
     $.ajax({
@@ -31,7 +32,7 @@ function Edit(CustomerId) {
                         if ($('#txtOpeningBalance').val() > 1) {
                             $('#txtOpeningBalance').attr('disabled', true);
                         }
-                        $('#btnSave').html("Update")
+                        $('#btnSave').html("Update");
                     });
                 }
             }
@@ -57,7 +58,6 @@ function Save_Customer() {
                 success: function (data) {
                     if (Chk_Res(data.errorMessage) == false) {
                         if (data != "") {
-
                             $('#Popup').modal('toggle');
                             calltoast("Data Saved Sucessfully", "success");
                             ListAllCustomer();
@@ -114,9 +114,7 @@ function ListAllCustomer() {
         success: function (data) {
 
             if (Chk_Res(data.errorMessage) == false) {
-
                 if (data != "") {
-
                     SetInnerVal("Customer_list_Body", data.split("|")[0])
                     SetInnerVal("Div_Paging", data.split("|")[1])
                 }

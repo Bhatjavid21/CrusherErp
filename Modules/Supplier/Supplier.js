@@ -6,11 +6,42 @@ function ResetFields() {
     $('#txtTripRate').val("");
     $('#txtRemarks').val("");
 }
+$(document).ready(function () {
+    $('#txtOpeningBalance').attr('disabled', false);
+});
+function Edit(CustomerId) {
 
+    $.ajax({
+        url: 'Customer.ashx',
+        type: "POST",
+        data: { 'fun': 'Edit', 'CustomerId': CustomerId },
+        success: function (data) {
+
+            if (Chk_Res(data.errorMessage) == false) {
+                if (data != "") {
+                    var CustomerData = JSON.parse(data)
+                    $.each(CustomerData, function (i, obj) {
+                        $('#hdnCustomerId').val(obj.Id);
+                        $("#txtCusName").val(obj.Name);
+                        $("#txtBusinessId").val(obj.Business_Id);
+                        $('#txtPhoneNo').val(obj.Phone_no);
+                        $('#txtAddress').val(obj.Address);
+                        $('#txtRemarks').val(obj.Remarks);
+                        $('#txtOpeningBalance').val(obj.OpeningBalance);
+                        $('#txtTripRate').val(obj.TripRate);
+                        if ($('#txtOpeningBalance').val() > 1) {
+                            $('#txtOpeningBalance').attr('disabled', true);
+                        }
+                        $('#btnSave').html("Update");
+                    });
+                }
+            }
+        }
+    });
+}
 function Save_Supplier() {
 
-    var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtAddress').val() + "|" +
-        "|" + $('#txtRemarks').val() + $('#txtTripRate').val();
+    var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtAddress').val() + "|" + $('#txtRemarks').val() + "|" + $('#txtTripRate').val() + "|" + $('#txtOpeningBalance').val();
     var Controls = "txtCusName,txtBusinessId,txtPhoneNo,txtAddress,txtTripRate,txtRemarks";
 
     if (setBorderColor_Validation(Controls)) {
@@ -39,6 +70,7 @@ function Save_Supplier() {
                     }
                 }
             });
+            ListAllSupplier();
         }
         else if (caption == "Update") {
 
@@ -46,7 +78,7 @@ function Save_Supplier() {
                 url: 'Supplier.ashx',
                 type: "POST",
                 data: {
-                    'fun': 'Update_Budget', 'InsertArray': InsertArray, 'Budget_Id': $('#hdn_Budget_Id').val()
+                    'fun': 'Update_Supplier', 'InsertArray': InsertArray, 'CustomerId': $('#hdnCustomerId').val()
                 },
                 success: function (data) {
 
@@ -60,6 +92,7 @@ function Save_Supplier() {
                     }
                 }
             });
+            ListAllSupplier();
         }
     }
     else {

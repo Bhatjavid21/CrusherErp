@@ -51,6 +51,7 @@
                 <!-- Main content -->
                 <section class="content mt-20">
                     <input type="hidden" id="hdn_PageNo" value="0" />
+                    <input type="hidden" id="hdnCustomerId" value="0" />
                     <div class="box">
                         <div class="col-lg-12 col-12 text-center" hidden id="divViewAccess">
                             <div class="box">
@@ -87,6 +88,7 @@
                                                 <th>Address</th>
                                                 <th>Phone No.</th>
                                                 <th>Rate/Trip</th>
+                                                <th>Advance Balance</th>
                                                 <th>Balance</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -153,17 +155,22 @@
                         <div class="row mb-10">
                             <div class="col-md-4 ">
                                 <label>Rate/Trip<span class="text-danger">*</span></label>
-                                <input class="form-control " id="txtTripRate" onkeydown=' return isNumeric(window.event.keyCode,this);'/>
+                                <input class="form-control " id="txtTripRate" value="0" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Advance Balance<span class="text-danger">*</span></label>
+                                <input class="form-control " id="txtOpeningBalance" value="0" onkeydown=' return isNumeric(window.event.keyCode,this);' />
                             </div>
                             <div class="col-md-4 ">
                                 <label>Address<span class="text-danger">*</span></label>
                                 <textarea class="form-control " id="txtAddress"></textarea>
 
                             </div>
-                            <div class="col-md-4 ">
+                        </div>
+                        <div class="row mb-10">
+                            <div class="col-md-8 ">
                                 <label>Remarks</label>
                                 <textarea class="form-control " id="txtRemarks"></textarea>
-
                             </div>
                         </div>
                         <div class="row">
