@@ -12,7 +12,7 @@ $(document).ready(function () {
 function Edit(CustomerId) {
 
     $.ajax({
-        url: 'Customer.ashx',
+        url: 'Supplier.ashx',
         type: "POST",
         data: { 'fun': 'Edit', 'CustomerId': CustomerId },
         success: function (data) {

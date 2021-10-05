@@ -5,6 +5,42 @@ alter TABLE [dbo].tbl_Sales add  Voucher_Numbers nvarchar(max) NULL
 
 alter TABLE [dbo].[tbl_Customer_Supplier] add TripRate decimal(18,2)
 	
+CREATE TABLE [dbo].[MyBusinessInfo](
+	[Id] [decimal](18, 0) NOT NULL primary key identity(1,1),
+	[BizName] [nvarchar](500) NULL,
+	[BizAddress] [nvarchar](500) NULL,
+	[Mobile] [nvarchar](500) NULL,
+	[Email] [nvarchar](500) NULL,
+	[Website] [nvarchar](500) NULL,
+	[Tagline] [nvarchar](500) NULL,
+	[GSTIN] [nvarchar](50) null,
+	[CGST] [nvarchar](50) null,
+	[SGST] [nvarchar](50) null,
+	[IGST] [nvarchar] (50) null,
+	[AccountNo] [nvarchar] (20) null,
+	[BankName] [nvarchar] (200) null,
+	[Branch] [nvarchar] (200) null,
+	[IFSC] [nvarchar] (100) null,
+	[CreatedOn] [date] null,
+	[UpdatedOn] [date] null
+)
 
 
+CREATE TABLE [dbo].[Tbl_Invoice](
+	[Id] [int] IDENTITY(1,1) NOT NULL primary key,
+	[Invoice_No] [varchar](20) NULL,
+	[Invoice_Date] [date] NULL,
+	[Customer_Id] [int] NULL,
+	[Invoice_Amount] [decimal](18, 2) NULL,
+	[From_Date] [date] NULL,
+	[To_Date] [date] NULL,
+	[Payment_Status] [int] NULL
+	)
+
+
+	CREATE TABLE [dbo].[Tbl_Invoice_Items](
+	[Item_Id] [int] IDENTITY(1,1) NOT NULL primary key,
+	[Invoice_Id] [int] NULL,
+	[Sales_Id] [int] NULL
+	)
 

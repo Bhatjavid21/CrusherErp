@@ -138,7 +138,7 @@
 
                     <br />
                     <div class="p-3 mt-3 rounded border">
-                        <a href="#">
+                        <a href="../Customer/Customer_Master.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
                                 <div class="p-1 px-4 d-flex flex-column align-items-center rounded"><span class="d-block char text-success">
                                     <asp:Literal ID="ltrCustomers" runat="server" Text="240"></asp:Literal></span></div>
@@ -151,7 +151,7 @@
                         </a>
                     </div>
                     <div class="p-3 mt-3 ml-10 rounded border">
-                        <a href="#">
+                        <a href="../Product/Product_Master.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
                                 <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
                                     <asp:Literal ID="ltrProducts" runat="server" Text="4"></asp:Literal></span></div>
@@ -165,7 +165,7 @@
 
                     </div>
                     <div class="p-3 mt-3 ml-10 rounded border">
-                        <a href="#">
+                        <a href="../Supplier/Supplier_Master.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
                                 <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
                                     <asp:Literal ID="ltrSuppliers" runat="server" Text="34"></asp:Literal></span></div>
@@ -179,7 +179,7 @@
 
                     </div>
                     <div class="p-3 mt-3 ml-10 rounded border">
-                        <a href="#">
+                        <a href="../Purchase/Purchase_Master.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
                                 <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
                                     <asp:Literal ID="ltsPurchases" runat="server" Text="300"></asp:Literal></span></div>
@@ -192,7 +192,7 @@
                         </a>
                     </div>
                     <div class="p-3 mt-3 ml-10 rounded border">
-                        <a href="#">
+                        <a href="../Sales/Sales_Master.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
                                 <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
                                     <asp:Literal ID="ltrSales" runat="server" Text="1001"></asp:Literal></span></div>
@@ -205,7 +205,7 @@
                         </a>
                     </div>
                     <div class="p-3 mt-3 ml-10 rounded border">
-                        <a href="#">
+                        <a href="../Invoice/Invoice_List.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
                                 <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
                                     <asp:Literal ID="ltrInvoices" runat="server" Text="356"></asp:Literal></span></div>

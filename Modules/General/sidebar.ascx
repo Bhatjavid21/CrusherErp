@@ -82,19 +82,16 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a><i class="mdi mdi-toggle-switch-off"></i>General</a></li>
-                    <li><a><i class="mdi mdi-toggle-switch-off"></i>Configuration</a></li>
+                    <%--<li><a><i class="mdi mdi-toggle-switch-off"></i>General</a></li>--%>
+                    <li>
+                        <a href="<%=G.S%>Setttings/BusinessInfo.aspx">
+                            <i class="mdi mdi-toggle-switch-off"></i>Business Info</a>
+                    </li>
                     <%--<li><a href=""><i class="mdi mdi-toggle-switch-off"></i>Currency</a></li>--%>
                     <%--<li class="<%Response.Write(G.set_Submenu("user"));%>"><a href="<%=G.S%>User/user.aspx"><i class="mdi mdi-toggle-switch-off"></i>Users</a></li>--%>
                     <%--<li class="<%Response.Write(G.set_Submenu("roles"));%>"><a href="<%=G.S%>Settings/roles.aspx"><i class="mdi mdi-toggle-switch-off"></i>Roles</a></li>--%>
                 </ul>
             </li>
-
-
-
-
-
-
         </ul>
     </section>
 </aside>

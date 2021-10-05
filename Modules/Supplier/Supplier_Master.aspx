@@ -82,7 +82,6 @@
                                     <table class="table table-hover table-bordered ">
                                         <thead>
                                             <tr>
-
                                                 <th>Supplier Name</th>
                                                 <th>Business Id</th>
                                                 <th>Address</th>
@@ -148,7 +147,6 @@
                             <div class="col-md-4">
                                 <label>Phone No/Mobile No<span class="text-danger">*</span></label>
                                 <input class="form-control " id="txtPhoneNo" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
                             </div>
 
                         </div>
