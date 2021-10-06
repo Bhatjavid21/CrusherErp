@@ -302,5 +302,27 @@
                 </div>
             </div>
         </div>
+
+
+
 </body>
 </html>
+<script>
+
+    $('#btnDelete').on('click', function (e) {
+        confirmDialog('Are You Sure To delete this Supplier', function () {
+            
+        });
+    });
+
+    function confirmDialog(message, onConfirm) {
+        var fClose = function () {
+            modal.modal("hide");
+        };
+        var modal = $("#confirmModal");
+        modal.modal("show");
+        $("#confirmMessage").empty().append(message);
+        $("#confirmOk").unbind().one('click', onConfirm).one('click', fClose);
+        $("#confirmCancel").unbind().one("click", fClose);
+    }
+</script>

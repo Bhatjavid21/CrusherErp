@@ -137,30 +137,36 @@
                             </div>
                         </div>
                         <div class="row mb-10">
+                             <div class="col-md-3">
+                                <label>Purchase Date<span class="text-danger">*</span></label>
+                                <input class="form-control " tabindex="0" type="date" id="txtPurchasedate" onkeyup="CalculateSalesPrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>
                             <div class="col-md-3">
                                 <label>Supplier<span class="text-danger">*</span></label>
-                                <select id="ddlSupplier" class="form-control enq-dropdown select2">
+                                <select id="ddlSupplier" class="form-control enq-dropdown select2" onchange="GetRate()">
                                     <option value="0">Select</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label>Product<span class="text-danger">*</span></label>
-                                <select id="ddlproduct" class="form-control enq-dropdown select2" onchange="GetRate()">
+                                <select id="ddlproduct" class="form-control enq-dropdown select2" >
                                     <option value="0">Select</option>
                                 </select>
                             </div>
+                           
                             <div class="col-md-3">
-                                <label>Quantity (ft)<span class="text-danger">*</span></label>
-                                <input class="form-control " value="200" id="txtQty" onkeyup="CalculatePurchasePrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
-
-                            </div>
-                            <div class="col-md-3">
-                                <label>Rate Per (ft) <span class="text-danger">*</span></label>
+                                <label>Rate Per (Trip) <span class="text-danger">*</span></label>
                                 <input class="form-control " value="0.00" id="txtRate" onkeyup="CalculatePurchasePrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
 
                             </div>
                         </div>
                         <div class="row mb-10">
+                           <%--  <div class="col-md-3">
+                                <label>Quantity (ft)<span class="text-danger">*</span></label>
+                                <input class="form-control " value="200" id="txtQty" onkeyup="CalculatePurchasePrice()" onkeydown=' return isNumeric(window.event.keyCode,this);' />
+
+                            </div>--%>
                             <div class="col-md-3">
                                 <label>No.Of Trips<span class="text-danger">*</span></label>
                                 <input type="number" onchange="CalculatePurchasePrice()" class="form-control " onkeyup="CalculatePurchasePrice()" value="1" id="txtTrips" onkeydown=' return isNumeric(window.event.keyCode,this);' />
@@ -182,16 +188,16 @@
                                 <input class="form-control " value="0.00" readonly id="txtTotalCost" onkeydown=' return isNumeric(window.event.keyCode,this);' />
 
                             </div>
-                            <div class="col-md-3">
+                            
+                              <div class="col-md-3">
                                 <label>Vehicle No<span class="text-danger">*</span></label>
                                 <input class="form-control " value="" id="txtvehicle" />
 
                             </div>
-
                         </div>
                         <div class="row mb-10">
 
-
+                          
 
 
                             <div class="col-md-6 ">

@@ -185,6 +185,27 @@
             </div>
         </div>
 
+<div class="modal" id="confirmModal">
+  <div class="modal-dialog" style="width:30%!important;">
+    <div class="modal-content">
+    <div class="modal-header">
+                        <h5 class="modal-title" id="PopUpTitle1"> Are You Sure To Delete This Supplier ..?  </h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+        </div>
+      <div class="modal-body mt-5 ">
+          <div>
+           
+           <button type="button" data-dismiss="modal" class="btn btn-danger right ml-5" id="confirmCancel">No</button>
+            <button type="button"  class="btn btn-success right" onclick="DeleteSupplier()" id="confirmOk">Yes</button>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+</div>
+
         <script src="<%=G.S%>General/jquery.min.js"></script>
         <script src="<%=G.B%>assets/vendor_components/jquery-3.3.1/jquery-3.3.1.js"></script>
         <script src="<%=G.B%>assets/vendor_components/popper/dist/popper.min.js"></script>
@@ -202,16 +223,12 @@
 
         <script>
 
-
             $(document).ready(function () {
-                //  GetUserAccess();
+
+                    //  GetUserAccess();
                 ListAllSupplier();
+
             });
-
-
-
-
-
 
         </script>
     </form>

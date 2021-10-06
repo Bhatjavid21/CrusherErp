@@ -41,7 +41,7 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
                         bindddls();
                         break;
                     case "GetRate":
-                        GetRate(context.Request.Form["Product_Id"]);
+                        GetRate(context.Request.Form["Supplier_Id"]);
                         break;
                     case "Edit":
                         Edit(context.Request.Form["Purchase_Id"]);
@@ -94,9 +94,9 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Purchase)  select Max(id) as Max_Id from tbl_Purchase else select 0 as Max_Id")+1;
         Context.Response.Write(jasonString1 + "|" + jasnString2+"|"+Max_Number.ToString());
     }
-    void GetRate(string Product_id)
+    void GetRate(string Supplier_id)
     {
-        string Rate = DB.Get_Scaler("Select Rate from tbl_Product where Id=" + Product_id);
+        string Rate = DB.Get_Scaler("Select Isnull(TripRate,0.00) as Rate from tbl_Customer_Supplier where Id=" + Supplier_id);
         Context.Response.Write(Rate);
     }
     //*********************************View*********************************View******************************************View***********************************************************
@@ -197,7 +197,7 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
 
         string[] Data = InsertArray.Split('|');
         string Purchase_Order_No = GetPONumber(Data[0], Data[9]);
-        string sql = "Insert into tbl_Purchase values('" + Data[0] + "','" + Purchase_Order_No + "','"+DateTime.Now.ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "')";
+        string sql = "Insert into tbl_Purchase values('" + Data[0] + "','" + Purchase_Order_No + "','"+Convert.ToDateTime(Data[10]).ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "')";
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {
@@ -219,7 +219,7 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         string[] Data = InsertArray.Split('|');
         decimal NewTotalCost = decimal.Parse(Data[6]);
         decimal Difrence =NewTotalCost-OldTotalcost  ;
-        string sql = "Update  tbl_Purchase Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Fuel_Price='" + Data[5] + "',Total_Cost='"+Data[6]+"',Vehicle_No='" + Data[7] + "',Remarks='" + Data[8] +"' where Id="+Purchase_Id;
+        string sql = "Update  tbl_Purchase Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Fuel_Price='" + Data[5] + "',Total_Cost='"+Data[6]+"',Vehicle_No='" + Data[7] + "',Remarks='" + Data[8] +"',Purchase_Date='"+Convert.ToDateTime(Data[10]).ToString("yyyy-MM-dd")+"' where Id="+Purchase_Id;
         Ret = DB.Get_ScalerInt(sql);
         if(Ret>-1)
         {

@@ -183,10 +183,11 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
         StringBuilder sql = new StringBuilder();
         int Ret = -9;
         string[] Data = InsertArray.Split('|');
+        decimal OldBalance = decimal.Parse(DB.Get_Scaler("select isnull(OpeningBalance,0.00) from tbl_Customer_Supplier where Id=" + CustomerId));
         decimal openingBal = Convert.ToDecimal(Data[3]);
 
         sql.Append("update tbl_Customer_Supplier set Business_Id='" + Data[1] + "',Name='" + Data[0] + "',Address='" + Data[4] + "',OpeningBalance='" + openingBal + "',");
-        if (openingBal < 1)
+        if (OldBalance ==0)
             sql.Append("Balance=Balance+" + openingBal + ",");
         sql.Append("Remarks = '" + Data[5] + "', Updated_Date = '" + DateTime.Now.ToString("yyyy-MM-dd") + "', IsActive = 1, IsSupplier = 0, Phone_No = '" + Data[2] + "' where id='" + CustomerId + "'");
         Ret = DB.Get_ScalerInt(sql + "");

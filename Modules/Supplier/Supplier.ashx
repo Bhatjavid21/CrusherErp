@@ -40,6 +40,9 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                     case "Update_Supplier":
                         Update_Supplier(context.Request.Form["InsertArray"], context.Request.Form["CustomerId"]);
                         break;
+                    case "MakeInactiveSupplier":
+                        MakeInactiveSupplier(context.Request.Form["id"],context.Request.Form["Active"]);
+                        break;
                 }
                 //  }
                 //  else { Context.Response.Write("SessionIsDead"); }
@@ -90,6 +93,8 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                        "<td>" + dr["Business_Id"] + "</td>" +
                        "<td>" + dr["Address"] + "</td>" +
                         "<td> " + dr["Phone_no"] + " </td>" +
+                        "<td>" + dr["TripRate"] + "</td>" +
+                        "<td> " + dr["OpeningBalance"] + " </td>" +
                        "<td>" + dr["Balance"] + "</td>";
 
 
@@ -107,7 +112,7 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                                                 "<span><i class='ti-settings'></i></span>" +
                                             "</button>" +
                                             "<ul class='dropdown-menu dropdown-menu-right'>";
-                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='View(this.id)'><i class='fa fa-edit'></i>View</a></li>" +
+                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='View(this.id)'><i class='fa fa-eye'></i>View</a></li>" +
                    "<li class='dropdown-divider'></li>";
 
 
@@ -116,11 +121,21 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
                     output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Edit(this.id)'><i class='fa fa-edit'></i>Edit</a></li>" +
                 "<li class='dropdown-divider'></li>";
                 }
-                if (ApproveAccess.Equals("True"))
+                if (dr["IsActive"].ToString().Equals("True"))
                 {
-                    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AprovePopup' onclick='GetEstimatedAmnt(this.id)'><i class='fa fa-edit'></i>Approve</a></li>" +
+                    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' onclick='MakeInactiveSupplier(this.id,0)' ><i class='fa fa-active'></i>Make Inactive</a></li>" +
                       "<li class='dropdown-divider'></li>";
                 }
+                else
+                {
+                          output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' onclick='MakeInactiveSupplier(this.id,1)' ><i class='fa fa-active'></i>Make Active</a></li>" +
+                      "<li class='dropdown-divider'></li>";
+                }
+                //if (ApproveAccess.Equals("True"))
+                //{
+                //    output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#AprovePopup' onclick='GetEstimatedAmnt(this.id)'><i class='fa fa-edit'></i>Approve</a></li>" +
+                //      "<li class='dropdown-divider'></li>";
+                //}
 
 
                 output += "</div> </td></tr>";
@@ -179,12 +194,13 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
         StringBuilder sql = new StringBuilder();
         int Ret = -9;
         string[] Data = InsertArray.Split('|');
-        decimal openingBal = Convert.ToDecimal(Data[3]);
+        decimal OldBalance = decimal.Parse(DB.Get_Scaler("select isnull(OpeningBalance,0.00) from tbl_Customer_Supplier where Id=" + CustomerId));
+        decimal openingBal = Convert.ToDecimal(Data[6]);
 
-        sql.Append("update tbl_Customer_Supplier set Business_Id='" + Data[1] + "',Name='" + Data[0] + "',Address='" + Data[4] + "',OpeningBalance='" + openingBal + "',");
-        if (openingBal < 1)
+        sql.Append("update tbl_Customer_Supplier set Business_Id='" + Data[1] + "',Name='" + Data[0] + "',Address='" + Data[3] + "',OpeningBalance='" + openingBal + "',");
+        if (OldBalance ==0)
             sql.Append("Balance=Balance+" + openingBal + ",");
-        sql.Append("Remarks = '" + Data[5] + "', Updated_Date = '" + DateTime.Now.ToString("yyyy-MM-dd") + "', IsActive = 1, IsSupplier = 1, Phone_No = '" + Data[2] + "' where id='" + CustomerId + "'");
+        sql.Append("Remarks = '" + Data[4] + "', TripRate='"+Data[5]+"', Updated_Date = '" + DateTime.Now.ToString("yyyy-MM-dd") + "', IsActive = 1, IsSupplier = 1, Phone_No = '" + Data[2] + "' where id='" + CustomerId + "'");
         Ret = DB.Get_ScalerInt(sql + "");
         if (Ret > -1)
         {
@@ -193,6 +209,19 @@ public class H_tbl_Supplier : IHttpHandler, IRequiresSessionState
         else
         {
             Context.Response.Write("Something Went Wrong");
+        }
+    }
+    void MakeInactiveSupplier(string Id,string Active)
+    {
+        int Ret = -9;
+        Ret = DB.Get_ScalerInt("Update [tbl_Customer_Supplier] set IsActive='"+Active+"' where Id=" + Id);
+        if (Ret > -1)
+        {
+            Context.Response.Write("Success");
+        }
+        else
+        {
+            Context.Response.Write("");
         }
     }
     public bool IsReusable { get { return false; } }

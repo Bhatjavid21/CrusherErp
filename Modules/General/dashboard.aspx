@@ -153,7 +153,7 @@
                     <div class="p-3 mt-3 ml-10 rounded border">
                         <a href="../Product/Product_Master.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
-                                <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
+                                <div class="p-1 px-4 d-flex flex-column align-items-center  rounded "><span class="d-block char text-success">
                                     <asp:Literal ID="ltrProducts" runat="server" Text="4"></asp:Literal></span></div>
                             </div>
                             <div class="d-flex flex-row align-items-center">
@@ -168,7 +168,9 @@
                         <a href="../Supplier/Supplier_Master.aspx">
                             <div class=" p-2  d-flex flex-row align-items-center">
                                 <div class="p-1 px-4 d-flex flex-column align-items-center  rounded"><span class="d-block char text-success">
-                                    <asp:Literal ID="ltrSuppliers" runat="server" Text="34"></asp:Literal></span></div>
+                                    <asp:Literal ID="ltrSuppliers" runat="server" Text="34"></asp:Literal></span>
+
+                                </div>
                             </div>
                             <div class="d-flex flex-row align-items-center">
                                 <div class="ml-2 p-3 d-inline">                                   

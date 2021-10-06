@@ -7,7 +7,7 @@ function ResetFields() {
     $('#ddlSupplier').attr("disabled", false)
     
     $('#ddlproduct').attr("disabled", false)
-
+    SetTodaysDate('#txtPurchasedate')
 
     $('#ddlSupplier').val(0);
     $('#ddlproduct').val(0);
@@ -71,7 +71,7 @@ function GetRate() {
     $.ajax({
         url: 'Purchase.ashx',
         type: "POST",
-        data: { 'fun': 'GetRate', 'Product_Id': $('#ddlproduct').val() },
+        data: { 'fun': 'GetRate', 'Supplier_Id': $('#ddlSupplier').val() },
         success: function (data) {
 
             if (Chk_Res(data.errorMessage) == false) {
@@ -89,13 +89,13 @@ function GetRate() {
 function CalculatePurchasePrice()
 {
    var rate= $('#txtRate').val()
-   var qty= $('#txtQty').val()
+   //var qty= $('#txtQty').val()
    var trips= $('#txtTrips').val();
    var fuel= $('#txtFuelPrice').val();
   
 
-    var PurchasePrice = (parseFloat(rate) * Number(qty)) * Number(trips);
-
+   // var PurchasePrice = (parseFloat(rate) * Number(qty)) * Number(trips);
+    var PurchasePrice = (parseFloat(rate) * Number(trips));
     var TotalCost = parseFloat(PurchasePrice) - parseFloat(fuel);
     
     $('#txtTotalCost').val(TotalCost);
@@ -105,7 +105,7 @@ function Save_Purchase() {
 
     var InsertArray = $('#ddlSupplier').val() + "|" + $('#ddlproduct').val() + "|" +
         $('#txtQty').val() + "|" + $('#txtRate').val() + "|" + $('#txtTrips').val() 
-        + "|" + $('#txtFuelPrice').val() + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() +"|" + $('#PurchaseMaxNum').val()
+        + "|" + $('#txtFuelPrice').val() + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() + "|" + $('#PurchaseMaxNum').val() + "|" + $('#txtPurchasedate').val() 
         
     var Controls = "ddlSupplier,ddlproduct,txtQty,txtRate,txtTrips,txtSite,txtPurchasePrice,txtTotalCost,txtvehicle";
 
@@ -178,7 +178,7 @@ function Edit(Purchase_Id, Isview) {
 
                     $.each(PurchaseData, function (i, obj) {
                         bindddls(true, obj.Supplier_Id, obj.Product_Id);
-                       
+                        $('#txtPurchasedate').val(SetDateFormat(obj.Purchase_Date))
                         $('#hdn_Purchase_Id').val(obj.Id);
                         $('#txtQty').val(obj.Quantity);
                         $('#txtRate').val(obj.Rate) +
@@ -266,4 +266,21 @@ function pageNo(pno) {
 }
 
 
+function SetTodaysDate(obj) {
+    var date = new Date();
+    Date.prototype.setDate = function () {
+        var yyyy = this.getFullYear().toString();
+        var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
+        var dd = this.getDate().toString();
+        return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+    };
+    $(obj).val(date.setDate());
+}
 
+function SetDateFormat(datestring) {
+    var date = new Date(datestring);
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
+    var dd = date.getDate().toString();
+    return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+}

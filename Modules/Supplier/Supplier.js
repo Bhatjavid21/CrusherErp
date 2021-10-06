@@ -1,16 +1,18 @@
 function ResetFields() {
+
     $('#txtCusName').val("");
     $('#txtBusinessId').val("");
     $('#txtPhoneNo').val("");
     $('#txtAddress').val("");
     $('#txtTripRate').val("");
     $('#txtRemarks').val("");
+
 }
 $(document).ready(function () {
     $('#txtOpeningBalance').attr('disabled', false);
 });
 function Edit(CustomerId) {
-
+   
     $.ajax({
         url: 'Supplier.ashx',
         type: "POST",
@@ -30,7 +32,7 @@ function Edit(CustomerId) {
                         $('#txtOpeningBalance').val(obj.OpeningBalance);
                         $('#txtTripRate').val(obj.TripRate);
                         if ($('#txtOpeningBalance').val() > 1) {
-                            $('#txtOpeningBalance').attr('disabled', true);
+                         $('#txtOpeningBalance').attr('disabled', true);
                         }
                         $('#btnSave').html("Update");
                     });
@@ -42,8 +44,8 @@ function Edit(CustomerId) {
 function Save_Supplier() {
 
     var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtAddress').val() + "|" + $('#txtRemarks').val() + "|" + $('#txtTripRate').val() + "|" + $('#txtOpeningBalance').val();
-    var Controls = "txtCusName,txtBusinessId,txtPhoneNo,txtAddress,txtTripRate,txtRemarks";
-
+    var Controls = "txtCusName,txtBusinessId,txtPhoneNo,txtAddress,txtTripRate";
+   
     if (setBorderColor_Validation(Controls)) {
         var caption = $('#btnSave').html();
         if (caption == "Save") {
@@ -99,7 +101,6 @@ function Save_Supplier() {
         calltoast("Please fill the mandatory infromaton.", "error");
     }
 }
-
 function ListAllSupplier() {
 
     // var SourceType = $('#DdlListDiv').val()
@@ -126,8 +127,6 @@ function ListAllSupplier() {
         }
     });
 }
-
-
 function calltoast(msg, msgtype) {
     $.toast({
         heading: '',
@@ -139,14 +138,35 @@ function calltoast(msg, msgtype) {
         stack: 6
     });
 }
+function SetId(id) {
+    $('#hdnCustomerId').val(id)
+}
+function MakeInactiveSupplier(id,Active) {
+   // var id = $('#hdnCustomerId').val()
 
+    $.ajax({
+        url: 'Supplier.ashx',
+        type: "POST",
+        data: {
+            'fun': 'MakeInactiveSupplier', 'id': id, 'Active': Active
+        },
+        success: function (data) {
 
+            if (Chk_Res(data.errorMessage) == false) {
+
+                if (data != "") {
+                    calltoast("Success", "success");
+                    //$('#confirmModal').modal('toggle');
+                    ListAllSupplier();
+                }
+            }
+        }
+    });
+}
 function Searchtxt() {
     SetVal("hid_page", 0);
     ListAllSupplier();
 }
-
-
 function pageNo(pno) {
     SetVal("hid_page", pno);
     ListAllSupplier();
