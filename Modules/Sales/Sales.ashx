@@ -10,6 +10,7 @@ using System.Web.SessionState;
 using Newtonsoft.Json;
 using System.Configuration;
 using ClosedXML.Excel;
+using System.Text;
 
 public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
 {
@@ -203,11 +204,13 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
     void Save_Sales(string InsertArray)
     {
         int Ret=-9;
-
+        StringBuilder str = new StringBuilder();
         string[] Data = InsertArray.Split('|');
         string Sale_Order_No = GetSONumber(Data[0], Data[12]);
-        string sql = "Insert into tbl_Sales values('" + Data[0] + "','" + Sale_Order_No + "','"+Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
-        Ret = DB.Get_ScalerInt(sql);
+        // string sql = "Insert into tbl_Sales values('" + Data[0] + "','" + Sale_Order_No + "','"+Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')";
+        str.Append("INSERT INTO [dbo].[tbl_Sales]([Customer_Id],[Sale_Order_No],[Sale_Date],[Product_Id],[Quantity],[Rate],[Trips],[Site],[Sales_Price],[Fuel_Price],[Discount_Amount],[Total_Cost],[Vehicle_No],[Remarks])VALUES ");
+        str.Append("('" + Data[0] + "','" + Sale_Order_No + "','" + Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd") + "','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')");
+        Ret = DB.Get_ScalerInt(str.ToString());
         if(Ret>-1)
         {
             DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[9] + " where Id=" + Data[0]);
@@ -254,9 +257,9 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
     void SaveVoucher(string sales_id,string Vouchers)
     {   int Ret = -9;
         Ret = DB.Get_ScalerInt("Update  tbl_Sales Set Voucher_Numbers='" + Vouchers + "' where Id="+sales_id);
-      if(Ret>-1)
+        if(Ret>-1)
         {
-            
+
             Context.Response.Write("Success");
         }
         else
