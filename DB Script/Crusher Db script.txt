@@ -75,3 +75,57 @@ ALTER TABLE [dbo].[tbl_Ledger] ADD  CONSTRAINT [DF_tbl_Ledger_CreatedOn]  DEFAUL
 GO
 
 
+USE [CrusherErp]
+GO
+
+/****** Object:  Table [dbo].[tbl_Customer_Payments]    Script Date: 13-Oct-21 9:28:18 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[tbl_Customer_Payments](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payment_Number] [varchar](30) NULL,
+	[Customer_Id] [int] NOT NULL,
+	[Payment_Mode] [varchar](20) NOT NULL,
+	[Cheque_Number_Trans_Id] [varchar](40) NULL,
+	[Payment_Date] [date] NOT NULL,
+	[Payment_Amount] [decimal](18, 2) NULL,
+	[Recieved_By] [varchar](20) NULL,
+	[Remarks] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+USE [CrusherErp]
+GO
+
+/****** Object:  Table [dbo].[tbl_Supplier_Payments]    Script Date: 13-Oct-21 9:28:57 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[tbl_Supplier_Payments](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payment_Number] [varchar](30) NULL,
+	[Supplier] [int] NOT NULL,
+	[Payment_Mode] [varchar](20) NOT NULL,
+	[Cheque_Number_Trans_Id] [varchar](40) NULL,
+	[Payment_Date] [date] NOT NULL,
+	[Payment_Amount] [decimal](18, 2) NULL,
+	[Paid_By] [varchar](20) NULL,
+	[Remarks] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
