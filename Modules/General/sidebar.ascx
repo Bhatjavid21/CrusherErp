@@ -58,6 +58,12 @@
                 </a>
             </li>
 
+              <li class="<%Response.Write(G.set_Submenu("Payments"));%>">
+                <a href="<%=G.S%>Payments/Payments.aspx">
+                    <i class="mdi mdi-cash"></i><span>Payments</span>
+                </a>
+            </li>
+
             <%--<li class="treeview <%Response.Write(G.set_Topmenu("items"));%>">
                 <a href="#">
                     <i class="mdi mdi-apps"></i><span>Item</span>
