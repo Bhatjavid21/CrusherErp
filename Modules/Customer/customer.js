@@ -2,12 +2,13 @@ function ResetFields() {
     $('#txtCusName').val("");
     $('#txtBusinessId').val("");
     $('#txtPhoneNo').val("");
-    $('#txtAddress').val("") +
-        $('#txtRemarks').val("");
-    $('#txtOpeningBalance').val("");
+    $('#txtAddress').val("");
+    $('#txtRemarks').val("");
+    $('#txtOpeningBalance').val("0.00");
+    $('#txtOpeningBalance').attr('disabled', false);
 }
 $(document).ready(function () {
-    $('#txtOpeningBalance').attr('disabled', false);
+    $('#txtOpeningBalance').attr('disabled', true);
 });
 function Edit(CustomerId) {
 
@@ -44,7 +45,7 @@ function Save_Customer() {
 
     var InsertArray = $('#txtCusName').val() + "|" + $('#txtBusinessId').val() + "|" + $('#txtPhoneNo').val() + "|" + $('#txtOpeningBalance').val() + "|" + $('#txtAddress').val() +
         "|" + $('#txtRemarks').val();
-    var Controls = "txtCusName,DdlSourseName,txtBusinessId,txtPhoneNo,txtAddress,txtOpeningBalance";
+    var Controls = "txtCusName,DdlSourseName,txtBusinessId,txtPhoneNo,txtAddress";
 
     if (setBorderColor_Validation(Controls)) {
         var caption = $('#btnSave').html();

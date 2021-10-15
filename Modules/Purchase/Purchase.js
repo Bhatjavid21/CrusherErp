@@ -104,7 +104,7 @@ function CalculatePurchasePrice()
 function Save_Purchase() {
 
     var InsertArray = $('#ddlSupplier').val() + "|" + $('#ddlproduct').val() + "|" +
-        $('#txtQty').val() + "|" + $('#txtRate').val() + "|" + $('#txtTrips').val() 
+    + $('#txtRate').val() + "|" + $('#txtTrips').val() 
         + "|" + $('#txtFuelPrice').val() + "|" + $('#txtTotalCost').val() + "|" + $('#txtvehicle').val() + "|" + $('#txtRemarks').val() + "|" + $('#PurchaseMaxNum').val() + "|" + $('#txtPurchasedate').val() 
         
     var Controls = "ddlSupplier,ddlproduct,txtQty,txtRate,txtTrips,txtSite,txtPurchasePrice,txtTotalCost,txtvehicle";

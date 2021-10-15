@@ -35,7 +35,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                         break;
                     case "ListAllSales":
 
-                        ListAllSales(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]),context.Request.Form["customer"]);
+                        ListAllSales(context.Request.Form["SearchString"], Convert.ToInt32(context.Request.Form["Page_No"]), context.Request.Form["customer"]);
 
                         break;
                     case "bindddls":
@@ -51,7 +51,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                         Update_Sales(context.Request.Form["InsertArray"], context.Request.Form["Sales_Id"]);
                         break;
                     case "SaveVoucher":
-                        SaveVoucher(context.Request.Form["Sales_id"],context.Request.Form["Vouchers"]);
+                        SaveVoucher(context.Request.Form["Sales_id"], context.Request.Form["Vouchers"]);
                         break;
                 }
                 //  }
@@ -64,7 +64,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
     void Edit(string Sales_Id)
     {
         string jasonString1 = "";
-        DataTable Dt = DB.GetDataTable("select * from tbl_Sales where Id="+Sales_Id);
+        DataTable Dt = DB.GetDataTable("select * from tbl_Sales where Id=" + Sales_Id);
         if (Dt.Rows.Count > 0)
         {
             jasonString1 = JsonConvert.SerializeObject(Dt);
@@ -94,8 +94,8 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         {
             jasnString2 = "";
         }
-        Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Sales)  select Max(id) as Max_Id from tbl_Sales else select 0 as Max_Id")+1;
-        Context.Response.Write(jasonString1 + "|" + jasnString2+"|"+Max_Number.ToString());
+        Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Sales)  select Max(id) as Max_Id from tbl_Sales else select 0 as Max_Id") + 1;
+        Context.Response.Write(jasonString1 + "|" + jasnString2 + "|" + Max_Number.ToString());
     }
     void GetRate(string Product_id)
     {
@@ -103,15 +103,15 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         Context.Response.Write(Rate);
     }
     //*********************************View*********************************View******************************************View***********************************************************
-    void ListAllSales(string SearchString,int Page_No,string customer)
+    void ListAllSales(string SearchString, int Page_No, string customer)
     {
         string EditAccess = "True";
         string ApproveAccess = "True";
-        string output="";
+        string output = "";
         int TotalRecords = 0, from = 1, to = 20; if (Page_No == 0) { Page_No = 1; };
         // StringBuilder output = new StringBuilder();
         from = (((Page_No * 20) - 20) + 1); to = Page_No * 20;
-        string CustomerFilter="";
+        string CustomerFilter = "";
         if (!customer.Equals("0"))
         {
             CustomerFilter = " and a.Customer_Id='" + customer + "' ";
@@ -122,21 +122,21 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         //{
         //    StatusFilter=" and a.Approval_Status="+status;
         //}
-        string SearchFilter ="";
-        if(!SearchString.Equals(""))
+        string SearchFilter = "";
+        if (!SearchString.Equals(""))
         {
-            SearchFilter="and  ( a.Sale_Order_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
+            SearchFilter = "and  ( a.Sale_Order_No like '%" + SearchString + "%' or  b.Name like '%" + SearchString + "%' )";
         }
 
-        string  sql = "With NewTable as( select a.*,b.Id as CusId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id "+
-                      " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 "+SearchFilter+CustomerFilter+") select * from NewTable where RowNum between "+from+" And "+to;
+        string sql = "With NewTable as( select a.*,b.Id as CusId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id " +
+                      " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 " + SearchFilter + CustomerFilter + ") select * from NewTable where RowNum between " + from + " And " + to;
 
-        DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter+CustomerFilter);
+        DataTable dt = DB.GetDataTable(sql);
+        TotalRecords = DB.Get_ScalerInt("select count(a.Id) from tbl_Sales a left outer join tbl_Customer_Supplier b on a.Customer_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  " + SearchFilter + CustomerFilter);
 
-        if(dt.Rows.Count>0)
+        if (dt.Rows.Count > 0)
         {
-            foreach(DataRow dr in dt.Rows)
+            foreach (DataRow dr in dt.Rows)
             {
 
                 output += "<tr>" +
@@ -153,7 +153,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                         "<td> " + dr["Total_Cost"] + " </td>";
 
 
-                output +=  "<td> "+
+                output += "<td> " +
                   "<div class='btn-group'>" +
                                             "<button data-toggle='dropdown' class='btn btn-outline btn-default dropdown-toggle' aria-expanded='true'>" +
                                                 "<span><i class='ti-settings'></i></span>" +
@@ -163,7 +163,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                    "<li class='dropdown-divider'></li>";
                 output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popup' onclick='Edit(this.id,0)'><i class='fa fa-edit'></i>Edit</a></li>" +
                   "<li class='dropdown-divider'></li>";
-                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popupvocher' onclick=AddVoucher(this.id,'"+dr["Voucher_Numbers"]+"')><i class='fa fa-doc'></i>Add/View Voucher</a></li>" +
+                output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal' data-target='#Popupvocher' onclick=AddVoucher(this.id,'" + dr["Voucher_Numbers"] + "')><i class='fa fa-doc'></i>Add/View Voucher</a></li>" +
                  "<li class='dropdown-divider'></li>";
                 output += "<li><a id='" + dr["Id"] + "' href='javascript:void(0);' class='dropdown-item' data-toggle='modal'  deletesale(this.id)'><i class='fa fa-delete'></i>Delete Sale</a></li>" +
                  "<li class='dropdown-divider'></li>";
@@ -180,12 +180,12 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
                 //}
 
 
-                output+="</div> </td></tr>";
+                output += "</div> </td></tr>";
             }
         }
         else
         {
-            output+="<tr><td colspan='8'> No Records Found  </td></tr>";
+            output += "<tr><td colspan='8'> No Records Found  </td></tr>";
         }
         string str_Pagging = "", Paging_Strip = Pagination.PG(TotalRecords, Page_No, 20);
 
@@ -199,11 +199,11 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
 
                   + "</ul></div></div>";
         }
-        Context.Response.Write(output+"|"+str_Pagging);
+        Context.Response.Write(output + "|" + str_Pagging);
     }
     void Save_Sales(string InsertArray)
     {
-        int Ret=-9;
+        int Ret = -9;
         StringBuilder str = new StringBuilder();
         string[] Data = InsertArray.Split('|');
         string Sale_Order_No = GetSONumber(Data[0], Data[12]);
@@ -211,9 +211,12 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         str.Append("INSERT INTO [dbo].[tbl_Sales]([Customer_Id],[Sale_Order_No],[Sale_Date],[Product_Id],[Quantity],[Rate],[Trips],[Site],[Sales_Price],[Fuel_Price],[Discount_Amount],[Total_Cost],[Vehicle_No],[Remarks])VALUES ");
         str.Append("('" + Data[0] + "','" + Sale_Order_No + "','" + Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd") + "','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "','" + Data[9] + "','" + Data[10] + "','" + Data[11] + "')");
         Ret = DB.Get_ScalerInt(str.ToString());
-        if(Ret>-1)
+        if (Ret > -1)
         {
             DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[9] + " where Id=" + Data[0]);
+            decimal lastBalance = GetLastBalance(Data[0]);
+            decimal LastBalance = decimal.Parse(Data[9]) + lastBalance;
+            DB.Get_ScalerInt("INSERT INTO [dbo].[tbl_Ledger]([AccountId],[LedgerType],[LedgerTypeId],[CR],[DR],[Balance])VALUES('" + Data[0] + "','SALE','" + Sale_Order_No + "','" + Data[9] + "',0,'" + LastBalance.ToString() + "')");
             Context.Response.Write("Success");
         }
         else
@@ -223,20 +226,34 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
 
     }
 
-
-    void Update_Sales(string InsertArray,string Sales_Id)
+    decimal GetLastBalance(string customerId)
     {
-        int Ret=-9;
+        decimal bal = 0;
+        StringBuilder str = new StringBuilder();
+        str.Append("if exists (select * from tbl_Ledger where AccountId='" + customerId + "') ");
+        str.Append(" select max(Balance) from tbl_Ledger where AccountId='" + customerId + "'");
+        str.Append(" else select 0");
+        bal = DB.Get_ScalerInt(str.ToString());
+        return bal;
+
+    }
+
+    void Update_Sales(string InsertArray, string Sales_Id)
+    {
+        int Ret = -9;
         decimal OldTotalcost = decimal.Parse(DB.Get_Scaler("Select Total_Cost from tbl_Sales where Id=" + Sales_Id));
         string[] Data = InsertArray.Split('|');
         decimal NewTotalCost = decimal.Parse(Data[9]);
-        decimal Difrence =NewTotalCost- OldTotalcost  ;
+        decimal Difrence = NewTotalCost - OldTotalcost;
 
-        string sql = "Update  tbl_Sales Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Sales_Price='"+Data[6]+"',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='"+Data[9]+"',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] +"',Sale_Date='"+Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd")+"' where Id="+Sales_Id;
+        string sql = "Update  tbl_Sales Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Site='" + Data[5] + "',Sales_Price='" + Data[6] + "',Fuel_Price='" + Data[7] + "',Discount_Amount='" + Data[8] + "',Total_Cost='" + Data[9] + "',Vehicle_No='" + Data[10] + "',Remarks='" + Data[11] + "',Sale_Date='" + Convert.ToDateTime(Data[13]).ToString("yyyy-MM-dd") + "' where Id=" + Sales_Id;
         Ret = DB.Get_ScalerInt(sql);
-        if(Ret>-1)
+        if (Ret > -1)
         {
             DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Difrence + " where Id=" + Data[0]);
+            decimal lastBalance = GetLastBalance(Data[0]);
+            decimal LastBalance = decimal.Parse(Data[9]) + lastBalance;
+            DB.Get_ScalerInt("UPDATE [dbo].[tbl_Ledger] SET [CR] = '" + Data[9] + "',[Balance] ='" + LastBalance + "' WHERE  AccountId='" + Data[0] + "'");
             Context.Response.Write("Success");
         }
         else
@@ -246,7 +263,7 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
 
     }
 
-    string GetSONumber(string customer_id,string Max_Num)
+    string GetSONumber(string customer_id, string Max_Num)
     {
         string SONUM = "";
         string CustomerBusName = DB.Get_Scaler("select Business_Id from tbl_Customer_Supplier where Id=" + customer_id);
@@ -254,10 +271,11 @@ public class H_tbl_Sales : IHttpHandler, IRequiresSessionState
         return SONUM;
     }
 
-    void SaveVoucher(string sales_id,string Vouchers)
-    {   int Ret = -9;
-        Ret = DB.Get_ScalerInt("Update  tbl_Sales Set Voucher_Numbers='" + Vouchers + "' where Id="+sales_id);
-        if(Ret>-1)
+    void SaveVoucher(string sales_id, string Vouchers)
+    {
+        int Ret = -9;
+        Ret = DB.Get_ScalerInt("Update  tbl_Sales Set Voucher_Numbers='" + Vouchers + "' where Id=" + sales_id);
+        if (Ret > -1)
         {
 
             Context.Response.Write("Success");

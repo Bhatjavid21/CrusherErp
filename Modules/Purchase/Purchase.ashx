@@ -10,6 +10,7 @@ using System.Web.SessionState;
 using Newtonsoft.Json;
 using System.Configuration;
 using ClosedXML.Excel;
+using System.Text;
 
 public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
 {
@@ -34,7 +35,7 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
                         break;
                     case "ListAllPurchase":
 
-                        ListAllPurchase(context.Request.Form["SearchString"],Convert.ToInt32(context.Request.Form["Page_No"]));
+                        ListAllPurchase(context.Request.Form["SearchString"], Convert.ToInt32(context.Request.Form["Page_No"]));
 
                         break;
                     case "bindddls":
@@ -60,7 +61,7 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
     void Edit(string Purchase_Id)
     {
         string jasonString1 = "";
-        DataTable Dt = DB.GetDataTable("select * from tbl_Purchase where Id="+Purchase_Id);
+        DataTable Dt = DB.GetDataTable("select * from tbl_Purchase where Id=" + Purchase_Id);
         if (Dt.Rows.Count > 0)
         {
             jasonString1 = JsonConvert.SerializeObject(Dt);
@@ -91,8 +92,8 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         {
             jasnString2 = "";
         }
-        Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Purchase)  select Max(id) as Max_Id from tbl_Purchase else select 0 as Max_Id")+1;
-        Context.Response.Write(jasonString1 + "|" + jasnString2+"|"+Max_Number.ToString());
+        Max_Number = DB.Get_ScalerInt("if exists (select id from tbl_Purchase)  select Max(id) as Max_Id from tbl_Purchase else select 0 as Max_Id") + 1;
+        Context.Response.Write(jasonString1 + "|" + jasnString2 + "|" + Max_Number.ToString());
     }
     void GetRate(string Supplier_id)
     {
@@ -100,15 +101,15 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         Context.Response.Write(Rate);
     }
     //*********************************View*********************************View******************************************View***********************************************************
-    void ListAllPurchase(string SearchString,int Page_No)
+    void ListAllPurchase(string SearchString, int Page_No)
     {
         string EditAccess = "True";
         string ApproveAccess = "True";
-        string output="";
+        string output = "";
         int TotalRecords = 0, from = 1, to = 20; if (Page_No == 0) { Page_No = 1; };
         // StringBuilder output = new StringBuilder();
         from = (((Page_No * 20) - 20) + 1); to = Page_No * 20;
-        string SourceTypeFilter="";
+        string SourceTypeFilter = "";
         //if(!SourceType.Equals("Select"))
         //{
         //    SourceTypeFilter=" and a.Source_Type='"+SourceType+"' ";
@@ -119,21 +120,21 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         //{
         //    StatusFilter=" and a.Approval_Status="+status;
         //}
-        string SearchFilter="";
-        if(!SearchString.Equals(""))
+        string SearchFilter = "";
+        if (!SearchString.Equals(""))
         {
-            SearchFilter="and  ( a.Purchase_No like '%"+SearchString+"%' or  b.Name like '%"+SearchString+"%' )";
+            SearchFilter = "and  ( a.Purchase_No like '%" + SearchString + "%' or  b.Name like '%" + SearchString + "%' )";
         }
 
-        string  sql = "With NewTable as( select a.*,b.Id as PurchId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Supplier_Id=b.Id "+
-                      " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 "+SearchFilter+") select * from NewTable where RowNum between "+from+" And "+to;
+        string sql = "With NewTable as( select a.*,b.Id as PurchId,c.Id as ProdId, b.Name,c.Product_Name,ROW_NUMBER() over (order by a.Id desc) as RowNum from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Supplier_Id=b.Id " +
+                      " left outer join tbl_product c on a.Product_Id=c.Id where 1=1 " + SearchFilter + ") select * from NewTable where RowNum between " + from + " And " + to;
 
-        DataTable dt=DB.GetDataTable(sql);
-        TotalRecords=DB.Get_ScalerInt("select count(a.Id) from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Supplier_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  "+SearchFilter);
+        DataTable dt = DB.GetDataTable(sql);
+        TotalRecords = DB.Get_ScalerInt("select count(a.Id) from tbl_Purchase a left outer join tbl_Customer_Supplier b on a.Supplier_Id=b.Id left outer join tbl_product c on a.Product_Id=c.Id where 1=1  " + SearchFilter);
 
-        if(dt.Rows.Count>0)
+        if (dt.Rows.Count > 0)
         {
-            foreach(DataRow dr in dt.Rows)
+            foreach (DataRow dr in dt.Rows)
             {
 
                 output += "<tr>" +
@@ -141,13 +142,13 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
                        "<td>" + dr["Name"] + "</td>" +
                        "<td>" + dr["Product_Name"] + "</td>" +
                        "<td>" + dr["Purchase_No"] + "</td>" +
-                        "<td> " +dr["Quantity"] + " </td>" +
+                        "<td> " + dr["Quantity"] + " </td>" +
                         "<td> " + dr["Rate"] + " </td>" +
                         "<td> " + dr["Fuel_Price"] + " </td>" +
                         "<td> " + dr["Total_Cost"] + " </td>";
 
 
-                output +=  "<td> "+
+                output += "<td> " +
                   "<div class='btn-group'>" +
                                             "<button data-toggle='dropdown' class='btn btn-outline btn-default dropdown-toggle' aria-expanded='true'>" +
                                                 "<span><i class='ti-settings'></i></span>" +
@@ -170,12 +171,12 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
                 //}
 
 
-                output+="</div> </td></tr>";
+                output += "</div> </td></tr>";
             }
         }
         else
         {
-            output+="<tr><td colspan='8'> No Records Found  </td></tr>";
+            output += "<tr><td colspan='8'> No Records Found  </td></tr>";
         }
         string str_Pagging = "", Paging_Strip = Pagination.PG(TotalRecords, Page_No, 20);
 
@@ -189,19 +190,23 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
 
                   + "</ul></div></div>";
         }
-        Context.Response.Write(output+"|"+str_Pagging);
+        Context.Response.Write(output + "|" + str_Pagging);
     }
     void Save_Purchase(string InsertArray)
     {
-        int Ret=-9;
+        int Ret = -9;
 
         string[] Data = InsertArray.Split('|');
-        string Purchase_Order_No = GetPONumber(Data[0], Data[9]);
-        string sql = "Insert into tbl_Purchase values('" + Data[0] + "','" + Purchase_Order_No + "','"+Convert.ToDateTime(Data[10]).ToString("yyyy-MM-dd")+"','" + Data[1] + "','" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "','" + Data[8] + "')";
+        string Purchase_Order_No = GetPONumber(Data[0], Data[8]);
+        string sql = "Insert into tbl_Purchase values('" + Data[0] + "','" + Purchase_Order_No + "','" + Convert.ToDateTime(Data[9]).ToString("yyyy-MM-dd") + "','" + Data[1] + "',0,'" + Data[2] + "','" + Data[3] + "','" + Data[4] + "','" + Data[5] + "','" + Data[6] + "','" + Data[7] + "')";
         Ret = DB.Get_ScalerInt(sql);
-        if(Ret>-1)
+        if (Ret > -1)
         {
-            DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[6] + " where Id=" + Data[0]);
+            DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Data[5] + " where Id=" + Data[0]);
+            decimal lastBalance = GetLastBalance(Data[0]);
+            decimal LastBalance = decimal.Parse(Data[5]) + lastBalance;
+            DB.Get_ScalerInt("INSERT INTO [dbo].[tbl_Ledger]([AccountId],[LedgerType],[LedgerTypeId],[CR],[DR],[Balance])VALUES('" + Data[0] + "','PURCHASE','" + Purchase_Order_No + "',0,'" + Data[5] + "','" + LastBalance.ToString() + "')");
+
             Context.Response.Write("Success");
         }
         else
@@ -210,20 +215,32 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         }
 
     }
-
-
-    void Update_Purchase(string InsertArray,string Purchase_Id)
+    decimal GetLastBalance(string customerId)
     {
-        int Ret=-9;
+        decimal bal = 0;
+        StringBuilder str = new StringBuilder();
+        str.Append("if exists (select * from tbl_Ledger where AccountId='" + customerId + "') ");
+        str.Append(" select max(Balance) from tbl_Ledger where AccountId='" + customerId + "'");
+        str.Append(" else select 0");
+        bal = DB.Get_ScalerInt(str.ToString());
+        return bal;
+    }
+
+    void Update_Purchase(string InsertArray, string Purchase_Id)
+    {
+        int Ret = -9;
         decimal OldTotalcost = decimal.Parse(DB.Get_Scaler("Select Total_Cost from tbl_Purchase where Id=" + Purchase_Id));
         string[] Data = InsertArray.Split('|');
-        decimal NewTotalCost = decimal.Parse(Data[6]);
-        decimal Difrence =NewTotalCost-OldTotalcost  ;
-        string sql = "Update  tbl_Purchase Set Quantity='" + Data[2] + "',Rate='" + Data[3] + "',Trips='" + Data[4] + "',Fuel_Price='" + Data[5] + "',Total_Cost='"+Data[6]+"',Vehicle_No='" + Data[7] + "',Remarks='" + Data[8] +"',Purchase_Date='"+Convert.ToDateTime(Data[10]).ToString("yyyy-MM-dd")+"' where Id="+Purchase_Id;
+        decimal NewTotalCost = decimal.Parse(Data[5]);
+        decimal Difrence = NewTotalCost - OldTotalcost;
+        string sql = "Update  tbl_Purchase Set Quantity=0,Rate='" + Data[2] + "',Trips='" + Data[3] + "',Fuel_Price='" + Data[4] + "',Total_Cost='" + Data[5] + "',Vehicle_No='" + Data[6] + "',Remarks='" + Data[7] + "',Purchase_Date='" + Convert.ToDateTime(Data[9]).ToString("yyyy-MM-dd") + "' where Id=" + Purchase_Id;
         Ret = DB.Get_ScalerInt(sql);
-        if(Ret>-1)
+        if (Ret > -1)
         {
             DB.Get_ScalerInt("Update tbl_Customer_Supplier set Balance=Balance+" + Difrence + " where Id=" + Data[0]);
+            decimal lastBalance = GetLastBalance(Data[0]);
+            decimal LastBalance = decimal.Parse(Data[5]) + lastBalance;
+            DB.Get_ScalerInt("UPDATE [dbo].[tbl_Ledger] SET [DR] = '" + Data[5] + "',[Balance] ='" + LastBalance + "' WHERE  AccountId='" + Data[0] + "'");
             Context.Response.Write("Success");
         }
         else
@@ -232,7 +249,7 @@ public class H_tbl_Purchase : IHttpHandler, IRequiresSessionState
         }
 
     }
-    string GetPONumber(string Supplier_id,string Max_Num)
+    string GetPONumber(string Supplier_id, string Max_Num)
     {
         string SONUM = "";
         string SuplierBusName = DB.Get_Scaler("select Business_Id from tbl_Customer_Supplier where Id=" + Supplier_id);

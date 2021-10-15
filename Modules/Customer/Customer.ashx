@@ -155,7 +155,7 @@ public class H_tbl_Customer : IHttpHandler, IRequiresSessionState
         string[] Data = InsertArray.Split('|');
         decimal openingBal = Convert.ToDecimal(Data[3]);
         decimal totalBal = openingBal + 0;
-        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[4] + "','" + openingBal + "','" + totalBal + "','" + Data[5] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,0,'" + Data[2] + "')";
+        string sql = "Insert into tbl_Customer_Supplier values('" + Data[1] + "','" + Data[0] + "','" + Data[4] + "','" + openingBal + "','" + totalBal + "','" + Data[5] + "','" + DateTime.Now.ToString("yyyy-MM-dd") + "',null,1,0,'" + Data[2] + "',0)";
         Ret = DB.Get_ScalerInt(sql);
         if (Ret > -1)
         {
